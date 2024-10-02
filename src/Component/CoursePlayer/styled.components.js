@@ -29,15 +29,44 @@ export const RightContainer = styled.div`
 `;
 
 export const SubFolderDiv = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
-export const SubFolderFiles = styled.div`
-  width: 100%;
+export const FolderHeader = styled.h4`
+  background: #f7f9fa;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  padding-left: 20px;
+  border-bottom: ${props => props.view && "1px solid #d1d7dc"};
+`;
+
+export const FolderContent = styled.div`
+  margin: 0px;
+  padding: 20px;
+  padding-left: 32px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  margin-left: 150px;
+  gap: 6px;
+`;
+
+export const Folder = styled.div`
+  border: 1px solid #d1d7dc;
+  margin-bottom: 6px;
+`;
+
+export const VideoTitle = styled.div`
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 `;

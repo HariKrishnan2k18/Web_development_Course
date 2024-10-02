@@ -1,14 +1,14 @@
-// App.js
 import React from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import CoursePlayer from "./Component/CoursePlayer/CoursePlayer";
 
 function App() {
+  const title = "Javascript Data Structures and Algorithms";
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/course" element={<CoursePlayer />} />
+          <Route path="/course" element={<CoursePlayer title={title} />} />
           <Route
             path="/"
             element={
@@ -22,7 +22,9 @@ function App() {
                   textAlign: "center"
                 }}
               >
-                <h1>Javascript Data Structures and Algorithms</h1>
+                <h1>
+                  {title}
+                </h1>
                 <Link to="/course">Start Course</Link>
               </div>
             }
