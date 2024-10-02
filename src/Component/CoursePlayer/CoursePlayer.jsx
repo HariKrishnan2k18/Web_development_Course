@@ -11,8 +11,11 @@ import {
   VideoTitle
 } from "./styled.components";
 import { isMobile } from "react-device-detect";
-import PlayIcon from "../../Assets/Logo/play-button.svg";
-import FileIcon from "../../Assets/Logo/file-button.svg";
+import PlayIconWhite from "../../Assets/Logo/play-button.svg";
+import FileIconWhite from "../../Assets/Logo/file-button.svg";
+import PlayIconYellow from "../../Assets/Logo/play-button-yellow.svg";
+import FileIconYellow from "../../Assets/Logo/file-button-yellow.svg";
+import { useTheme } from "styled-components";
 
 const FOLDER_ID = "1-1Q8yNbknFn-CMzFik1xp1bI5r9GaNMX";
 const API_KEY = "AIzaSyDoNuBE0rTDp_IIRaklAaibErtalhb3mN4";
@@ -29,10 +32,22 @@ const getFolderDetails = async (folderId, apiKey) => {
 };
 
 const VideoPlayer = ({ title }) => {
+  const theme = useTheme();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [subFolders, setSubFolders] = useState([]);
   const [videos, setVideos] = useState([]);
   const [currentSubFolder, setCurrentSubFolder] = useState(null);
+  console.log(theme);
+  const ImageTheme = {
+    light: {
+      play: PlayIconWhite,
+      file: FileIconWhite
+    },
+    dark: {
+      play: PlayIconYellow,
+      file: FileIconYellow
+    }
+  };
   useEffect(() => {
     const fetchFolders = async () => {
       try {
@@ -145,7 +160,11 @@ const VideoPlayer = ({ title }) => {
                         onClick={() => handleVideoSelect(video)}
                       >
                         <span>
-                          <img src={PlayIcon} alt="^" width={"20px"}></img>
+                          <img
+                            src={ImageTheme[theme.type].play}
+                            alt="^"
+                            width={"20px"}
+                          ></img>
                         </span>
                         <span>
                           {video.name.replace(/^\d+\.\s|\.mp4$/g, "")}
@@ -163,7 +182,11 @@ const VideoPlayer = ({ title }) => {
                         style={{ cursor: "pointer" }}
                       >
                         <span>
-                          <img src={FileIcon} alt="^" width={"20px"}></img>
+                          <img
+                            src={ImageTheme[theme.type].file}
+                            alt="^"
+                            width={"20px"}
+                          ></img>
                         </span>
                         <span>
                           {/* {video.name.replace(

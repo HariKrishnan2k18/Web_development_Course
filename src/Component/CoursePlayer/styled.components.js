@@ -1,10 +1,18 @@
 import styled from "styled-components";
 
+export const AppContainer = styled.div`
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.color};
+  height: 100%;
+  min-height: 100vh;
+`;
+
 export const Container = styled.div`
   display: flex;
-  height: 100vh;
+  height: 100%;
   gap: ${props => (props.fullview ? "0px" : "24px")};
   width: 100%;
+
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 0px;
@@ -39,7 +47,7 @@ export const SubFolderDiv = styled.div`
 `;
 
 export const FolderHeader = styled.h4`
-  background: #f7f9fa;
+  background: ${({ theme }) => theme.contentlayout};
   cursor: pointer;
   padding: 10px;
   margin: 0px;
@@ -68,5 +76,5 @@ export const VideoTitle = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 16px;
 `;
