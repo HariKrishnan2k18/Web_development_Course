@@ -73,117 +73,115 @@ const VideoPlayer = ({ title }) => {
       setVideos(sortName(subFolderVideos));
     }
   };
+
   return (
-    <>
-      <Container>
-        <LeftContainer>
-          {currentVideo ? (
-            <div style={{ marginTop: "32px" }}>
-              <iframe
-                src={`https://drive.google.com/file/d/${currentVideo.id}/preview`}
-                title={currentVideo.name}
-                width={"100%"}
-                height={isMobile ? "350px" : "500px"}
-                style={{ border: "none" }}
-                allow="autoplay"
-                allowFullScreen
-              />
-            </div>
-          ) : (
-            <img
-              src="https://bairesdev.mo.cloudinary.net/blog/2023/08/What-Is-JavaScript-Used-For.jpg?tx=w_1024,q_auto"
-              alt="img"
+    <Container>
+      <LeftContainer>
+        {currentVideo ? (
+          <div style={{ marginTop: "32px" }}>
+            <iframe
+              src={`https://drive.google.com/file/d/${currentVideo.id}/preview`}
+              title={currentVideo.name}
               width={"100%"}
               height={isMobile ? "350px" : "500px"}
-            ></img>
+              style={{ border: "none" }}
+              allow="autoplay"
+              allowFullScreen
+              webkitallowfullscreen
+              mozallowfullscreen
+            />
+          </div>
+        ) : (
+          <img
+            src="https://bairesdev.mo.cloudinary.net/blog/2023/08/What-Is-JavaScript-Used-For.jpg?tx=w_1024,q_auto"
+            alt="img"
+            width={"100%"}
+            height={isMobile ? "350px" : "500px"}
+          ></img>
+        )}
+        <SubFolderDiv>
+          <h2>{title}</h2>
+          {currentSubFolder && currentVideo && (
+            <>
+              <div style={{ textAlign: "left" }}>Currently Playing</div>
+              <b
+                style={{ marginTop: "10px" }}
+              >{` ${currentSubFolder.name.replace(
+                /^\d+\.\s/,
+                ""
+              )} > ${currentVideo.name.replace(/^\d+\.\s|\.mp4$/g, "")}`}</b>
+            </>
           )}
-          <SubFolderDiv>
-            <h2>{title}</h2>
-            {currentSubFolder && currentVideo && (
-              <>
-                <div style={{ textAlign: "left" }}>Currently Playing</div>
-                <b
-                  style={{ marginTop: "10px" }}
-                >{` ${currentSubFolder.name.replace(
-                  /^\d+\.\s/,
-                  ""
-                )} > ${currentVideo.name.replace(/^\d+\.\s|\.mp4$/g, "")}`}</b>
-              </>
-            )}
-          </SubFolderDiv>
-        </LeftContainer>
+        </SubFolderDiv>
+      </LeftContainer>
 
-        <RightContainer>
-          <h3 style={{ marginTop: "2px" }}>Contents</h3>
-          {subFolders.map((subFolder) => (
-            <Folder key={subFolder.id}>
-              <FolderHeader
-                onClick={() => handleSubFolderSelect(subFolder)}
-                view={currentSubFolder === subFolder}
-              >
-                <span>
-                  {currentSubFolder === subFolder ? (
-                    <i
-                      class="fa fa-chevron-down"
-                      style={{ fontSize: "13px" }}
-                    ></i>
-                  ) : (
-                    <i
-                      class="fa fa-chevron-up"
-                      style={{ fontSize: "13px" }}
-                    ></i>
-                  )}
-                </span>
-                <span>{subFolder.name.split(". ")[1]}</span>
-              </FolderHeader>
-              {currentSubFolder === subFolder && (
-                <FolderContent>
-                  {videos.map((video) => (
-                    <>
-                      {video.mimeType === "video/mp4" ? (
-                        <VideoTitle
-                          key={video.id}
-                          onClick={() => handleVideoSelect(video)}
-                        >
-                          <span>
-                            <img src={PlayIcon} alt="^" width={"20px"}></img>
-                          </span>
-                          <span>
-                            {video.name.replace(/^\d+\.\s|\.mp4$/g, "")}
-                          </span>
-                        </VideoTitle>
-                      ) : (
-                        <VideoTitle
-                          key={video.id}
-                          onClick={() =>
-                            window.open(
-                              `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
-                              "_blank"
-                            )
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          <span>
-                            <img src={FileIcon} alt="^" width={"20px"}></img>
-                          </span>
-                          <span>
-                            {/* {video.name.replace(
+      <RightContainer>
+        <h3 style={{ marginTop: "2px" }}>Contents</h3>
+        {subFolders.map((subFolder) => (
+          <Folder key={subFolder.id}>
+            <FolderHeader
+              onClick={() => handleSubFolderSelect(subFolder)}
+              view={currentSubFolder === subFolder}
+            >
+              <span>
+                {currentSubFolder === subFolder ? (
+                  <i
+                    class="fa fa-chevron-down"
+                    style={{ fontSize: "13px" }}
+                  ></i>
+                ) : (
+                  <i class="fa fa-chevron-up" style={{ fontSize: "13px" }}></i>
+                )}
+              </span>
+              <span>{subFolder.name.split(". ")[1]}</span>
+            </FolderHeader>
+            {currentSubFolder === subFolder && (
+              <FolderContent>
+                {videos.map((video) => (
+                  <>
+                    {video.mimeType === "video/mp4" ? (
+                      <VideoTitle
+                        key={video.id}
+                        onClick={() => handleVideoSelect(video)}
+                      >
+                        <span>
+                          <img src={PlayIcon} alt="^" width={"20px"}></img>
+                        </span>
+                        <span>
+                          {video.name.replace(/^\d+\.\s|\.mp4$/g, "")}
+                        </span>
+                      </VideoTitle>
+                    ) : (
+                      <VideoTitle
+                        key={video.id}
+                        onClick={() =>
+                          window.open(
+                            `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
+                            "_blank"
+                          )
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        <span>
+                          <img src={FileIcon} alt="^" width={"20px"}></img>
+                        </span>
+                        <span>
+                          {/* {video.name.replace(
                               /^\d+\.\s|\.html$|\.srt$|\.vtt$/g,
                               ""
                             )} */}
-                            {video.name.replace(/^\d+\.\s/, "")}
-                          </span>
-                        </VideoTitle>
-                      )}
-                    </>
-                  ))}
-                </FolderContent>
-              )}
-            </Folder>
-          ))}
-        </RightContainer>
-      </Container>
-    </>
+                          {video.name.replace(/^\d+\.\s/, "")}
+                        </span>
+                      </VideoTitle>
+                    )}
+                  </>
+                ))}
+              </FolderContent>
+            )}
+          </Folder>
+        ))}
+      </RightContainer>
+    </Container>
   );
 };
 
