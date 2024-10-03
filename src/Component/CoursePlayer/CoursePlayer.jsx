@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -23,6 +24,8 @@ import { useSelector } from "react-redux";
 import { FourSquare, OrbitProgress } from "react-loading-indicators";
 import { cleanFileName, sortName } from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
+import { useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
 
 const ImageTheme = {
   light: {
@@ -44,21 +47,27 @@ const VideoPlayer = () => {
   const [storeSubFolderVideo, setSubFolderVideo] = useState([]);
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoOnload, setVideoOnload] = useState(false);
+  const navigate = useNavigate();
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
 
   const { course } = useSelector((s) => s.currentCourse);
 
   useEffect(() => {
-    const subFolders =
-      data &&
-      data.filter(
-        (file) => file.mimeType === "application/vnd.google-apps.folder"
-      );
-    const videos = data && data.filter((file) => file.mimeType === "video/mp4");
-    setSubFolders(sortName(subFolders));
-    setVideos(videos);
-  }, [data]);
+    if (isEmpty(course)) {
+      navigate("/");
+    } else {
+      const subFolders =
+        data &&
+        data.filter(
+          (file) => file.mimeType === "application/vnd.google-apps.folder"
+        );
+      const videos =
+        data && data.filter((file) => file.mimeType === "video/mp4");
+      setSubFolders(sortName(subFolders));
+      setVideos(videos);
+    }
+  }, [data, course]);
 
   const handleVideoSelect = (video) => {
     if (video?.name !== currentVideo?.name) {
@@ -113,7 +122,7 @@ const VideoPlayer = () => {
       <Container>
         <LeftContainer>
           {currentVideo ? (
-            <div style={{ marginTop: "32px" }}>
+            <div style={{ marginTop: !isMobile && "32px" }}>
               {videoOnload && (
                 <VideoLoad>
                   <OrbitProgress
