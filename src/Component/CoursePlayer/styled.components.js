@@ -6,7 +6,7 @@ export const AppContainer = styled.div`
   height: 100%;
   min-height: 100vh;
   @media (max-width: 768px) {
-    padding: 10px;
+    padding: 16px;
   }
 `;
 
@@ -16,6 +16,7 @@ export const SwitchButtonIcon = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   margin-right: 30px;
+  padding-bottom: 20px;
 `;
 
 export const Container = styled.div`
@@ -131,5 +132,18 @@ export const LoadingDiv = styled.div`
   @media (max-width: 768px) {
     top: 40%;
     left: 35%;
+  }
+`;
+
+export const VideoLoad = styled.div`
+  width: 100%;
+  height: 500px;
+  top: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 768px) {
+    height: 350px;
   }
 `;

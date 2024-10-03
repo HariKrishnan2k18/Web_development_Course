@@ -10,6 +10,7 @@ import {
   LoadingLine,
   RightContainer,
   SubFolderDiv,
+  VideoLoad,
   VideoTitle
 } from "./styled.components";
 import { isMobile } from "react-device-detect";
@@ -19,7 +20,7 @@ import PlayIconYellow from "../../Assets/Logo/play-button-yellow.svg";
 import FileIconYellow from "../../Assets/Logo/file-button-yellow.svg";
 import { useTheme } from "styled-components";
 import { useSelector } from "react-redux";
-import { FourSquare } from "react-loading-indicators";
+import { FourSquare, OrbitProgress } from "react-loading-indicators";
 import { cleanFileName, sortName } from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
 
@@ -42,6 +43,7 @@ const VideoPlayer = () => {
   const [currentSubFolder, setCurrentSubFolder] = useState(null);
   const [storeSubFolderVideo, setSubFolderVideo] = useState([]);
   const [videoLoading, setVideoLoading] = useState(false);
+  const [videoOnload, setVideoOnload] = useState(false);
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
 
@@ -59,11 +61,14 @@ const VideoPlayer = () => {
   }, [data]);
 
   const handleVideoSelect = (video) => {
-    setCurrentVideo(video);
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+    if (video?.name !== currentVideo?.name) {
+      setCurrentVideo(video);
+      setVideoOnload(true);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
   };
 
   const handleSubFolderSelect = async (subFolder) => {
@@ -109,17 +114,31 @@ const VideoPlayer = () => {
         <LeftContainer>
           {currentVideo ? (
             <div style={{ marginTop: "32px" }}>
-              <iframe
-                src={`https://drive.google.com/file/d/${currentVideo.id}/preview`}
-                title={currentVideo.name}
-                width={"100%"}
-                height={isMobile ? "350px" : "500px"}
-                style={{ border: "none" }}
-                allow="autoplay"
-                allowFullScreen
-                webkitallowfullscreen
-                mozallowfullscreen
-              />
+              {videoOnload && (
+                <VideoLoad>
+                  <OrbitProgress
+                    variant="dotted"
+                    color="#32cd32"
+                    size="medium"
+                    text=""
+                    textColor=""
+                  />
+                </VideoLoad>
+              )}
+              <div style={{ display: videoOnload && "none" }}>
+                <iframe
+                  src={`https://drive.google.com/file/d/${currentVideo.id}/preview`}
+                  title={currentVideo.name}
+                  width={"100%"}
+                  onLoad={() => setVideoOnload(false)}
+                  height={isMobile ? "350px" : "500px"}
+                  style={{ border: "none" }}
+                  allow="autoplay"
+                  allowFullScreen
+                  webkitallowfullscreen
+                  mozallowfullscreen
+                />
+              </div>
             </div>
           ) : (
             <img
@@ -164,7 +183,9 @@ const VideoPlayer = () => {
                       ></i>
                     )}
                   </span>
-                  <span>{cleanFileName(subFolder.name)}</span>
+                  <span>
+                    {subFolder?.name && cleanFileName(subFolder.name)}
+                  </span>
                 </FolderHeader>
                 {currentSubFolder === subFolder && (
                   <FolderContent>

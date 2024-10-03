@@ -24,13 +24,12 @@ export const CourseContainer = styled.div`
 export const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 300px;
   gap: 20px;
   border: 2px solid rgb(50, 205, 50);
   padding: 20px;
 
-  @media (max-width: 768px) {
-    width: 100%;
+  @media (min-width: 768px) {
+    width: 300px;
   }
 `;
 export const StartCourseButton = styled(Link)`
