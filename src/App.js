@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CoursePlayer from "./Component/CoursePlayer/CoursePlayer";
 import { ThemeProvider } from "styled-components";
 import { AppContainer } from "./Component/CoursePlayer/styled.components";
