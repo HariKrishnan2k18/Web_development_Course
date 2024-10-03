@@ -12,7 +12,6 @@ const subFolderSlice = createSlice({
       state.loading = true;
     },
     fetchDataSuccess: (state, action) => {
-      console.log("data slice", action.payload);
       state.loading = false;
       state.data = action.payload;
       state.error = "";
