@@ -1,10 +1,13 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const AppContainer = styled.div`
   background: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.color};
   height: 100%;
   min-height: 100vh;
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 export const Container = styled.div`
@@ -24,6 +27,7 @@ export const LeftContainer = styled.div`
   padding: 10px;
   @media (max-width: 768px) {
     width: 100%;
+    padding: 0px;
   }
 `;
 
@@ -33,6 +37,7 @@ export const RightContainer = styled.div`
   display: ${props => props.fullview && "none"};
   @media (max-width: 768px) {
     width: 100%;
+    padding: 0px;
   }
 `;
 
@@ -77,4 +82,35 @@ export const VideoTitle = styled.div`
   display: flex;
   flex-direction: row;
   gap: 16px;
+`;
+
+const loadingAnimation = keyframes`
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+`;
+
+export const LoadingContainer = styled.div`
+  width: 100%;
+  height: 4px;
+  background-color: #f0f0f0;
+  overflow: hidden;
+  position: relative;
+`;
+
+export const LoadingLine = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  transform-origin: left;
+  animation: ${loadingAnimation} 2s infinite ease-in-out;
 `;
