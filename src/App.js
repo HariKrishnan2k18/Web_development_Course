@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CoursePlayer from "./Component/CoursePlayer/CoursePlayer";
 import { ThemeProvider } from "styled-components";
-import { AppContainer } from "./Component/CoursePlayer/styled.components";
+import {
+  AppContainer,
+  SwitchButtonIcon
+} from "./Component/CoursePlayer/styled.components";
 import WelcomePage from "./Component/WelcomePage/WelcomePage";
 import { Provider } from "react-redux";
 import store from "./data/store";
@@ -32,24 +35,16 @@ function App() {
       <ThemeProvider theme={obj[theme]}>
         <Router>
           <AppContainer>
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                marginRight: "30px"
-              }}
-            >
+            <SwitchButtonIcon>
               <button
                 width={"20px"}
-                style={{ marginRight: "30px" }}
+                style={{ marginRight: "30px", marginTop: "10px" }}
                 onClick={() =>
                   theme === "dark" ? setTheme("light") : setTheme("dark")}
               >
                 Switch Theme
               </button>
-            </div>
+            </SwitchButtonIcon>
             <Routes>
               <Route path="/course" element={<CoursePlayer title={title} />} />
               <Route path="/" element={<WelcomePage title={title} />} />

@@ -10,6 +10,14 @@ export const AppContainer = styled.div`
   }
 `;
 
+export const SwitchButtonIcon = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-right: 30px;
+`;
+
 export const Container = styled.div`
   display: flex;
   height: 100%;
@@ -113,4 +121,15 @@ export const LoadingLine = styled.div`
   background-color: gray;
   transform-origin: left;
   animation: ${loadingAnimation} 2s infinite ease-in-out;
+`;
+
+export const LoadingDiv = styled.div`
+  width: 100%;
+  top: 35%;
+  left: 45%;
+  position: fixed;
+  @media (max-width: 768px) {
+    top: 40%;
+    left: 35%;
+  }
 `;

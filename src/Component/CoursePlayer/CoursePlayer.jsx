@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Container,
   Folder,
@@ -7,6 +6,7 @@ import {
   FolderHeader,
   LeftContainer,
   LoadingContainer,
+  LoadingDiv,
   LoadingLine,
   RightContainer,
   SubFolderDiv,
@@ -20,22 +20,21 @@ import FileIconYellow from "../../Assets/Logo/file-button-yellow.svg";
 import { useTheme } from "styled-components";
 import { useSelector } from "react-redux";
 import { FourSquare } from "react-loading-indicators";
+import { cleanFileName, sortName } from "../../utils/helper";
+import { fetchApiData } from "../../data/SubFolderSlice/api";
 
-// const FOLDER_ID = "1-1Q8yNbknFn-CMzFik1xp1bI5r9GaNMX";
-const API_KEY = "AIzaSyDoNuBE0rTDp_IIRaklAaibErtalhb3mN4";
-
-const sortName = (arr) =>
-  arr.sort(
-    (a, b) => Number(a.name.split(".")[0]) - Number(b.name.split(".")[0])
-  );
-
-const getFolderDetails = async (folderId, apiKey) => {
-  const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents&key=${apiKey}&fields=files(id,name,mimeType)`;
-  const response = await axios.get(url);
-  return response.data.files;
+const ImageTheme = {
+  light: {
+    play: PlayIconWhite,
+    file: FileIconWhite
+  },
+  dark: {
+    play: PlayIconYellow,
+    file: FileIconYellow
+  }
 };
 
-const VideoPlayer = ({ title }) => {
+const VideoPlayer = () => {
   const theme = useTheme();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [subFolders, setSubFolders] = useState([]);
@@ -46,16 +45,8 @@ const VideoPlayer = ({ title }) => {
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
 
-  const ImageTheme = {
-    light: {
-      play: PlayIconWhite,
-      file: FileIconWhite
-    },
-    dark: {
-      play: PlayIconYellow,
-      file: FileIconYellow
-    }
-  };
+  const { course } = useSelector((s) => s.currentCourse);
+
   useEffect(() => {
     const subFolders =
       data &&
@@ -69,12 +60,10 @@ const VideoPlayer = ({ title }) => {
 
   const handleVideoSelect = (video) => {
     setCurrentVideo(video);
-    if (isMobile) {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   };
 
   const handleSubFolderSelect = async (subFolder) => {
@@ -89,7 +78,12 @@ const VideoPlayer = ({ title }) => {
         setVideos([...data.data]);
         setVideoLoading(false);
       } else {
-        const subFolderVideos = await getFolderDetails(subFolder.id, API_KEY);
+        const subFolderVideos = await fetchApiData({
+          payload: {
+            FOLDER_ID: subFolder.id,
+            API_KEY: course?.apikey
+          }
+        });
         setVideos(sortName(subFolderVideos));
         setVideoLoading(false);
         setSubFolderVideo([
@@ -101,16 +95,9 @@ const VideoPlayer = ({ title }) => {
   };
   if (loading) {
     return (
-      <div
-        style={{
-          width: "100%",
-          top: isMobile ? "40%" : "35%",
-          left: isMobile ? "35%" : "45%",
-          position: "fixed"
-        }}
-      >
+      <LoadingDiv>
         <FourSquare color="#32cd32" size="large" text="" textColor="#3a36a5" />
-      </div>
+      </LoadingDiv>
     );
   }
   if (error) {
@@ -136,23 +123,20 @@ const VideoPlayer = ({ title }) => {
             </div>
           ) : (
             <img
-              src="https://bairesdev.mo.cloudinary.net/blog/2023/08/What-Is-JavaScript-Used-For.jpg?tx=w_1024,q_auto"
+              src={course?.img}
               alt="img"
               width={"100%"}
               height={isMobile ? "350px" : "500px"}
             ></img>
           )}
           <SubFolderDiv>
-            <h2>{title}</h2>
+            <h2>{course?.name}</h2>
             {currentSubFolder && currentVideo && (
               <>
                 <div style={{ textAlign: "left" }}>Currently Playing</div>
-                <b
-                  style={{ marginTop: "10px" }}
-                >{` ${currentSubFolder.name.replace(
-                  /^\d+\.\s/,
-                  ""
-                )} > ${currentVideo.name.replace(/^\d+\.\s|\.mp4$/g, "")}`}</b>
+                <b style={{ marginTop: "10px" }}>{` ${cleanFileName(
+                  currentSubFolder.name
+                )} > ${cleanFileName(currentVideo.name)}`}</b>
               </>
             )}
           </SubFolderDiv>
@@ -160,85 +144,78 @@ const VideoPlayer = ({ title }) => {
 
         <RightContainer>
           <h3 style={{ marginTop: "2px" }}>Contents</h3>
-          {subFolders.map((subFolder) => (
-            <Folder key={subFolder.id}>
-              <FolderHeader
-                onClick={() => handleSubFolderSelect(subFolder)}
-                view={currentSubFolder === subFolder}
-              >
-                <span>
-                  {currentSubFolder === subFolder ? (
-                    <i
-                      class="fa fa-chevron-down"
-                      style={{ fontSize: "13px" }}
-                    ></i>
-                  ) : (
-                    <i
-                      class="fa fa-chevron-up"
-                      style={{ fontSize: "13px" }}
-                    ></i>
-                  )}
-                </span>
-                <span>{subFolder.name.split(". ")[1]}</span>
-              </FolderHeader>
-              {currentSubFolder === subFolder && (
-                <FolderContent>
-                  {videoLoading && (
-                    <LoadingContainer>
-                      <LoadingLine />
-                    </LoadingContainer>
-                  )}
-                  {videos.map((video) => (
-                    <>
-                      {video.mimeType === "video/mp4" ? (
-                        <VideoTitle
-                          key={video.id}
-                          onClick={() => handleVideoSelect(video)}
-                        >
-                          <span>
-                            <img
-                              src={ImageTheme[theme.type].play}
-                              alt="^"
-                              width={"20px"}
-                            ></img>
-                          </span>
-                          <span>
-                            {video.name.replace(/^\d+\.\s|\.mp4$/g, "")}
-                          </span>
-                        </VideoTitle>
-                      ) : (
-                        <VideoTitle
-                          key={video.id}
-                          onClick={() =>
-                            window.open(
-                              `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
-                              "_blank"
-                            )
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          <span>
-                            <img
-                              src={ImageTheme[theme.type].file}
-                              alt="^"
-                              width={"20px"}
-                            ></img>
-                          </span>
-                          <span>
-                            {/* {video.name.replace(
-                              /^\d+\.\s|\.html$|\.srt$|\.vtt$/g,
-                              ""
-                            )} */}
-                            {video.name.replace(/^\d+\.\s/, "")}
-                          </span>
-                        </VideoTitle>
-                      )}
-                    </>
-                  ))}
-                </FolderContent>
-              )}
-            </Folder>
-          ))}
+          {subFolders &&
+            subFolders.map((subFolder) => (
+              <Folder key={subFolder.id}>
+                <FolderHeader
+                  onClick={() => handleSubFolderSelect(subFolder)}
+                  view={currentSubFolder === subFolder}
+                >
+                  <span>
+                    {currentSubFolder === subFolder ? (
+                      <i
+                        class="fa fa-chevron-down"
+                        style={{ fontSize: "13px" }}
+                      ></i>
+                    ) : (
+                      <i
+                        class="fa fa-chevron-up"
+                        style={{ fontSize: "13px" }}
+                      ></i>
+                    )}
+                  </span>
+                  <span>{cleanFileName(subFolder.name)}</span>
+                </FolderHeader>
+                {currentSubFolder === subFolder && (
+                  <FolderContent>
+                    {videoLoading && (
+                      <LoadingContainer>
+                        <LoadingLine />
+                      </LoadingContainer>
+                    )}
+                    {videos.map((video) => (
+                      <>
+                        {video.mimeType === "video/mp4" ? (
+                          <VideoTitle
+                            key={video.id}
+                            onClick={() => handleVideoSelect(video)}
+                          >
+                            <span>
+                              <img
+                                src={ImageTheme[theme.type].play}
+                                alt="^"
+                                width={"20px"}
+                              ></img>
+                            </span>
+                            <span>{cleanFileName(video.name)}</span>
+                          </VideoTitle>
+                        ) : (
+                          <VideoTitle
+                            key={video.id}
+                            onClick={() =>
+                              window.open(
+                                `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
+                                "_blank"
+                              )
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            <span>
+                              <img
+                                src={ImageTheme[theme.type].file}
+                                alt="^"
+                                width={"20px"}
+                              ></img>
+                            </span>
+                            <span>{cleanFileName(video.name)}</span>
+                          </VideoTitle>
+                        )}
+                      </>
+                    ))}
+                  </FolderContent>
+                )}
+              </Folder>
+            ))}
         </RightContainer>
       </Container>
     </>

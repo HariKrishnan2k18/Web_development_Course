@@ -5,7 +5,7 @@ import { fetchApiData } from "./api";
 function* fetchDataSaga({ payload }) {
   try {
     const data = yield call(fetchApiData, { payload });
-    yield put(fetchDataSuccess(data.files));
+    yield put(fetchDataSuccess(data));
   } catch (error) {
     yield put(fetchDataFailure(error.message));
   }
