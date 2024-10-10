@@ -17,6 +17,12 @@ export const SwitchButtonIcon = styled.div`
   justify-content: flex-end;
   margin-right: 30px;
   padding-bottom: 20px;
+  > div {
+    width: 30px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 30px;
+  }
 `;
 
 export const Container = styled.div`

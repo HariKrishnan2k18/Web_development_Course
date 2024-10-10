@@ -144,8 +144,8 @@ const VideoPlayer = () => {
                   style={{ border: "none" }}
                   allow="autoplay"
                   allowFullScreen
-                  webkitallowfullscreen
-                  mozallowfullscreen
+                  webkitallowfullscreen={isMobile}
+                  mozallowfullscreen={isMobile}
                 />
               </div>
             </div>
