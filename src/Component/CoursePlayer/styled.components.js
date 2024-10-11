@@ -14,14 +14,29 @@ export const SwitchButtonIcon = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
-  margin-right: 30px;
-  padding-bottom: 20px;
+  justify-content: space-between;
+  align-items: center;
   > div {
+    padding: 20px;
+    @media (max-width: 768px) {
+      padding-top: 0px;
+    }
+  }
+  > div:first-child {
+    font-weight: 700;
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    @media (max-width: 768px) {
+      padding-right: 0px;
+    }
+  }
+  > div :last-child {
     width: 30px;
     cursor: pointer;
-    margin-top: 10px;
-    margin-right: 30px;
+    @media (max-width: 768px) {
+      padding-left: 0px;
+    }
   }
 `;
 
