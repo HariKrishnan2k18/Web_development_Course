@@ -14,7 +14,7 @@ export const Routers = ({ theme, setTheme }) => {
       <AppContainer>
         <SwitchButtonIcon>
           <div>
-            {course && course.name}
+            {course && window.location.pathname !== "/" && course.name}
           </div>
           <div
             onClick={() =>
@@ -33,8 +33,8 @@ export const Routers = ({ theme, setTheme }) => {
           </div>
         </SwitchButtonIcon>
         <Routes>
-          <Route path="/course" element={<VideoPlayer />} />
           <Route path="/" element={<WelcomePage />} />
+          <Route path="/course" element={<VideoPlayer />} />
         </Routes>
       </AppContainer>
     </Router>

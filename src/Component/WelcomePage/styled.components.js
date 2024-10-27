@@ -13,8 +13,9 @@ export const Container = styled.div`
 
 export const CourseContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   gap: 24px;
+  justify-content: center;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -24,6 +25,8 @@ export const CourseContainer = styled.div`
 export const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 0 0 calc(30% - 10px);
+  box-sizing: border-box;
   gap: 20px;
   border: 2px solid rgb(50, 205, 50);
   padding: 20px;
@@ -33,9 +36,10 @@ export const CardContainer = styled.div`
   }
 `;
 export const StartCourseButton = styled(Link)`
-    border: 1px solid green;
+    border: ${props =>
+      props.availability ? "1px solid green" : "1px solid black"};
     text-decoration: none;
-    background: green;
+    background: ${props => (props.availability ? "green" : "gray")};
     color: white;
     height: 35px;
     display: flex;
@@ -43,3 +47,5 @@ export const StartCourseButton = styled(Link)`
     align-items: center;
     justify-content: center;
 `;
+
+export const CourseName = styled.div`height: 35px;`;

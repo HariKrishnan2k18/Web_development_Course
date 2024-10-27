@@ -1,5 +1,13 @@
 import JavascriptDSA from "../Assets/images/JavascriptDSA.webp";
 import MERN from "../Assets/images/Mern.webp";
+import CompleteJavascript from "../Assets/images/The Complete JavaScript.jpg";
+import WebDeveloperBootCamp from "../Assets/images/The Web Developer Bootcamp 2024.jpg";
+import JavaProgramming from "../Assets/images/Java Programming.jpeg";
+import Angular from "../Assets/images/Angular.jpg";
+import NodeJs from "../Assets/images/NodeJs.png";
+import Machine from "../Assets/images/Introduction to Machine Learning.webp";
+import GitGitHub from "../Assets/images/learn-git.webp";
+import Kotlin from "../Assets/images/Kotlin-Android-Tutorial.png";
 
 export const Courses = [
   {
@@ -17,5 +25,69 @@ export const Courses = [
     apikey: "AIzaSyDoNuBE0rTDp_IIRaklAaibErtalhb3mN4",
     img: MERN,
     availability: true
+  },
+  {
+    id: 3,
+    name: "The Complete JavaScript Course 2024: From Zero to Expert!",
+    folderid: "",
+    apikey: "",
+    img: CompleteJavascript,
+    availability: false
+  },
+  {
+    id: 4,
+    name: "The Web Developer Bootcamp 2024",
+    folderid: "",
+    apikey: "",
+    img: WebDeveloperBootCamp,
+    availability: false
+  },
+  {
+    id: 5,
+    name: "Java Programming and Sofware Engineering Fundamentals",
+    folderid: "",
+    apikey: "",
+    img: JavaProgramming,
+    availability: false
+  },
+  {
+    id: 6,
+    name: "Angular - The Complete Guide (2024 Edition)",
+    folderid: "",
+    apikey: "",
+    img: Angular,
+    availability: false
+  },
+  {
+    id: 7,
+    name: "The Complete Node.js Developer Course (3rd Edition)",
+    folderid: "",
+    apikey: "",
+    img: NodeJs,
+    availability: false
+  },
+  {
+    id: 8,
+    name: "Introduction to Machine Learning",
+    folderid: "",
+    apikey: "",
+    img: Machine,
+    availability: false
+  },
+  {
+    id: 9,
+    name: "Git & GitHub - The Complete Git & GitHub Course",
+    folderid: "",
+    apikey: "",
+    img: GitGitHub,
+    availability: false
+  },
+  {
+    id: 10,
+    name: "Kotlin for Android Development",
+    folderid: "",
+    apikey: "",
+    img: Kotlin,
+    availability: false
   }
 ];
