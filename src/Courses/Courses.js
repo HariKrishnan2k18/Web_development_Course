@@ -8,6 +8,7 @@ import NodeJs from "../Assets/images/NodeJs.png";
 import Machine from "../Assets/images/Introduction to Machine Learning.webp";
 import GitGitHub from "../Assets/images/learn-git.webp";
 import Kotlin from "../Assets/images/Kotlin-Android-Tutorial.png";
+import AWS from "../Assets/images/AWS.jpg";
 
 export const Courses = [
   {
@@ -24,6 +25,14 @@ export const Courses = [
     folderid: "1dJiQEZzYd0gqgsDm0NJKXKonHuSpsbWO",
     apikey: "AIzaSyDoNuBE0rTDp_IIRaklAaibErtalhb3mN4",
     img: MERN,
+    availability: true
+  },
+  {
+    id: 3,
+    name: "Ultimate AWS Certified Developer Associate 2023 NEW DVA-C02",
+    apikey: "AIzaSyDaRxfpcqNfs6aW4R0pE9F2ZyrV5HNKcG8",
+    folderid: "1-0tW5h9dBooFzUFKwlxkJkM6KoyKUZrP",
+    img: AWS,
     availability: true
   },
   {

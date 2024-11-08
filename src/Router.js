@@ -14,7 +14,7 @@ export const Routers = ({ theme, setTheme }) => {
       <AppContainer>
         <SwitchButtonIcon>
           <div>
-            {course && window.location.pathname !== "/" && course.name}
+            {course && course.name}
           </div>
           <div
             onClick={() =>

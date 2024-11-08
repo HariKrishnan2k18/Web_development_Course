@@ -9,9 +9,14 @@ import {
 } from "./styled.components";
 import { Courses } from "../../Courses/Courses";
 import { storeCourse } from "../../data/CurrentCourse";
+import { useEffect } from "react";
 
 function WelcomePage() {
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(storeCourse({}));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Container>
       <h1>Welcome To The Course</h1>
