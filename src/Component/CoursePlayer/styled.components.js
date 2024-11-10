@@ -164,6 +164,8 @@ export const VideoLoad = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: ${({ theme }) => theme.frameborder};
+  background: ${({ theme }) => theme.frameloadingbackground};
   @media (max-width: 768px) {
     height: 350px;
   }

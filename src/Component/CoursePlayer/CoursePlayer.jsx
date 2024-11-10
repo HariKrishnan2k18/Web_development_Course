@@ -26,6 +26,7 @@ import { cleanFileName, sortName } from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
+import axios from "axios";
 
 const ImageTheme = {
   light: {
@@ -47,6 +48,7 @@ const VideoPlayer = () => {
   const [storeSubFolderVideo, setSubFolderVideo] = useState([]);
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoOnload, setVideoOnload] = useState(false);
+  const [htmltext, setHtml] = useState("");
   const navigate = useNavigate();
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
@@ -69,14 +71,39 @@ const VideoPlayer = () => {
     }
   }, [data, course]);
 
-  const handleVideoSelect = (video) => {
-    if (video?.name !== currentVideo?.name) {
-      setCurrentVideo(video);
+  const handleVideoSelect = async (video) => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+    setHtml(undefined);
+    if (video.mimeType === "video/mp4") {
+      if (video?.name !== currentVideo?.name) {
+        setCurrentVideo(video);
+        setVideoOnload(true);
+      }
+    } else if (
+      ["application/octet-stream", "text/javascript", "text/x-url"].includes(
+        video.mimeType
+      )
+    ) {
       setVideoOnload(true);
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+      setCurrentVideo({});
+      try {
+        const res = await axios.get(
+          `https://www.googleapis.com/drive/v3/files/${video.id}?alt=media&key=${course.apikey}`
+        );
+        setHtml(res.data);
+      } catch (error) {
+        setVideoOnload(false);
+        const link = document.createElement("a");
+        link.href = `https://drive.google.com/file/d/${video.id}/view?usp=sharing`;
+        link.target = "_blank";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } else {
     }
   };
 
@@ -117,11 +144,12 @@ const VideoPlayer = () => {
   if (error) {
     return <div>Error ...</div>;
   }
+
   return (
     <>
       <Container>
         <LeftContainer>
-          {currentVideo ? (
+          {currentVideo || htmltext ? (
             <div style={{ marginTop: !isMobile && "32px" }}>
               {videoOnload && (
                 <VideoLoad>
@@ -136,12 +164,23 @@ const VideoPlayer = () => {
               )}
               <div style={{ display: videoOnload && "none" }}>
                 <iframe
-                  src={`https://drive.google.com/file/d/${currentVideo.id}/preview`}
+                  src={
+                    currentVideo?.id &&
+                    `https://drive.google.com/file/d/${currentVideo.id}/preview`
+                  }
+                  srcDoc={
+                    htmltext &&
+                    `<html><body><pre>${htmltext}</pre></body></html>`
+                  }
                   title={currentVideo.name}
                   width={"100%"}
                   onLoad={() => setVideoOnload(false)}
                   height={isMobile ? "350px" : "500px"}
-                  style={{ border: "none" }}
+                  style={{
+                    border: currentVideo.id ? "none" : "2px solid black",
+                    color: theme.color,
+                    background: theme.type === "dark" ? theme.color : "#f8f6f5"
+                  }}
                   allow="autoplay"
                   allowFullScreen
                   webkitallowfullscreen={isMobile}
@@ -159,14 +198,18 @@ const VideoPlayer = () => {
           )}
           <SubFolderDiv>
             <h2>{course?.name}</h2>
-            {currentSubFolder && currentVideo && (
-              <>
-                <div style={{ textAlign: "left" }}>Currently Playing</div>
-                <b style={{ marginTop: "10px" }}>{` ${cleanFileName(
-                  currentSubFolder.name
-                )} > ${cleanFileName(currentVideo.name)}`}</b>
-              </>
-            )}
+            {currentSubFolder &&
+              currentVideo &&
+              currentVideo.mimeType === "video/mp4" && (
+                <>
+                  <div style={{ textAlign: "left" }}>Currently Playing</div>
+                  {currentVideo.mimeType === "video/mp4" && (
+                    <b style={{ marginTop: "10px" }}>{` ${cleanFileName(
+                      currentSubFolder.name
+                    )} > ${cleanFileName(currentVideo.name)}`}</b>
+                  )}
+                </>
+              )}
           </SubFolderDiv>
         </LeftContainer>
 
@@ -205,7 +248,12 @@ const VideoPlayer = () => {
                     )}
                     {videos.map((video) => (
                       <>
-                        {video.mimeType === "video/mp4" ? (
+                        {[
+                          "video/mp4",
+                          "application/octet-stream",
+                          "text/javascript",
+                          "text/x-url"
+                        ].includes(video.mimeType) ? (
                           <VideoTitle
                             key={video.id}
                             onClick={() => handleVideoSelect(video)}
@@ -217,17 +265,18 @@ const VideoPlayer = () => {
                                 width={"20px"}
                               ></img>
                             </span>
-                            <span>{cleanFileName(video.name)}</span>
+                            <span>{video?.name}</span>
                           </VideoTitle>
                         ) : (
                           <VideoTitle
                             key={video.id}
-                            onClick={() =>
+                            onClick={() => {
+                              setHtml(true);
                               window.open(
                                 `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
                                 "_blank"
-                              )
-                            }
+                              );
+                            }}
                             style={{ cursor: "pointer" }}
                           >
                             <span>
