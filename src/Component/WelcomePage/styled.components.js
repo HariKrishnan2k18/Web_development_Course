@@ -12,28 +12,20 @@ export const Container = styled.div`
 `;
 
 export const CourseContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   justify-content: center;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
+  width: 90%;
+  gap: 20px;
 `;
 
 export const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc(30% - 10px);
   box-sizing: border-box;
   gap: 20px;
   border: 2px solid rgb(50, 205, 50);
   padding: 20px;
-
-  @media (min-width: 768px) {
-    width: 300px;
-  }
 `;
 export const StartCourseButton = styled(Link)`
     border: ${props =>

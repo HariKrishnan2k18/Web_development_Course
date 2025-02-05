@@ -125,11 +125,14 @@ const VideoPlayer = () => {
             API_KEY: course?.apikey
           }
         });
-        setVideos(sortName(subFolderVideos));
+        const modifiedContent = subFolderVideos.filter(
+          (e) => e.mimeType !== "application/octet-stream"
+        );
+        setVideos(sortName(modifiedContent));
         setVideoLoading(false);
         setSubFolderVideo([
           ...storeSubFolderVideo,
-          { id: subFolder.id, data: sortName(subFolderVideos) }
+          { id: subFolder.id, data: sortName(modifiedContent) }
         ]);
       }
     }
@@ -146,158 +149,154 @@ const VideoPlayer = () => {
   }
 
   return (
-    <>
-      <Container>
-        <LeftContainer>
-          {currentVideo || htmltext ? (
-            <div style={{ marginTop: !isMobile && "32px" }}>
-              {videoOnload && (
-                <VideoLoad>
-                  <OrbitProgress
-                    variant="dotted"
-                    color="#32cd32"
-                    size="medium"
-                    text=""
-                    textColor=""
-                  />
-                </VideoLoad>
-              )}
-              <div style={{ display: videoOnload && "none" }}>
-                <iframe
-                  src={
-                    currentVideo?.id &&
-                    `https://drive.google.com/file/d/${currentVideo.id}/preview`
-                  }
-                  srcDoc={
-                    htmltext &&
-                    `<html><body><pre>${htmltext}</pre></body></html>`
-                  }
-                  title={currentVideo.name}
-                  width={"100%"}
-                  onLoad={() => setVideoOnload(false)}
-                  height={isMobile ? "350px" : "500px"}
-                  style={{
-                    border: currentVideo.id ? "none" : "2px solid black",
-                    color: theme.color,
-                    background: theme.type === "dark" ? theme.color : "#f8f6f5"
-                  }}
-                  allow="autoplay"
-                  allowFullScreen
-                  webkitallowfullscreen={isMobile}
-                  mozallowfullscreen={isMobile}
+    <Container>
+      <LeftContainer>
+        {currentVideo || htmltext ? (
+          <div style={{ marginTop: !isMobile && "32px" }}>
+            {videoOnload && (
+              <VideoLoad>
+                <OrbitProgress
+                  variant="dotted"
+                  color="#32cd32"
+                  size="medium"
+                  text=""
+                  textColor=""
                 />
-              </div>
+              </VideoLoad>
+            )}
+            <div style={{ display: videoOnload && "none" }}>
+              <iframe
+                src={
+                  currentVideo?.id &&
+                  `https://drive.google.com/file/d/${currentVideo.id}/preview`
+                }
+                srcDoc={
+                  htmltext && `<html><body><pre>${htmltext}</pre></body></html>`
+                }
+                title={currentVideo.name}
+                width={"100%"}
+                onLoad={() => setVideoOnload(false)}
+                height={isMobile ? "350px" : "500px"}
+                style={{
+                  border: currentVideo.id ? "none" : "2px solid black",
+                  color: theme.color,
+                  background: theme.type === "dark" ? theme.color : "#f8f6f5"
+                }}
+                allow="autoplay"
+                allowFullScreen
+                webkitallowfullscreen={isMobile}
+                mozallowfullscreen={isMobile}
+              />
             </div>
-          ) : (
-            <img
-              src={course?.img}
-              alt="img"
-              width={"100%"}
-              height={isMobile ? "350px" : "500px"}
-            ></img>
-          )}
-          <SubFolderDiv>
-            <h2>{course?.name}</h2>
-            {currentSubFolder &&
-              currentVideo &&
-              currentVideo.mimeType === "video/mp4" && (
-                <>
-                  <div style={{ textAlign: "left" }}>Currently Playing</div>
-                  {currentVideo.mimeType === "video/mp4" && (
-                    <b style={{ marginTop: "10px" }}>{` ${cleanFileName(
-                      currentSubFolder.name
-                    )} > ${cleanFileName(currentVideo.name)}`}</b>
-                  )}
-                </>
-              )}
-          </SubFolderDiv>
-        </LeftContainer>
-
-        <RightContainer>
-          <h3 style={{ marginTop: "2px" }}>Contents</h3>
-          {subFolders &&
-            subFolders.map((subFolder) => (
-              <Folder key={subFolder.id}>
-                <FolderHeader
-                  onClick={() => handleSubFolderSelect(subFolder)}
-                  view={currentSubFolder === subFolder}
-                >
-                  <span>
-                    {currentSubFolder === subFolder ? (
-                      <i
-                        class="fa fa-chevron-down"
-                        style={{ fontSize: "13px" }}
-                      ></i>
-                    ) : (
-                      <i
-                        class="fa fa-chevron-up"
-                        style={{ fontSize: "13px" }}
-                      ></i>
-                    )}
-                  </span>
-                  <span>
-                    {subFolder?.name && cleanFileName(subFolder.name)}
-                  </span>
-                </FolderHeader>
-                {currentSubFolder === subFolder && (
-                  <FolderContent>
-                    {videoLoading && (
-                      <LoadingContainer>
-                        <LoadingLine />
-                      </LoadingContainer>
-                    )}
-                    {videos.map((video) => (
-                      <>
-                        {[
-                          "video/mp4",
-                          "application/octet-stream",
-                          "text/javascript",
-                          "text/x-url"
-                        ].includes(video.mimeType) ? (
-                          <VideoTitle
-                            key={video.id}
-                            onClick={() => handleVideoSelect(video)}
-                          >
-                            <span>
-                              <img
-                                src={ImageTheme[theme.type].play}
-                                alt="^"
-                                width={"20px"}
-                              ></img>
-                            </span>
-                            <span>{video?.name}</span>
-                          </VideoTitle>
-                        ) : (
-                          <VideoTitle
-                            key={video.id}
-                            onClick={() => {
-                              setHtml(true);
-                              window.open(
-                                `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
-                                "_blank"
-                              );
-                            }}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <span>
-                              <img
-                                src={ImageTheme[theme.type].file}
-                                alt="^"
-                                width={"20px"}
-                              ></img>
-                            </span>
-                            <span>{cleanFileName(video.name)}</span>
-                          </VideoTitle>
-                        )}
-                      </>
-                    ))}
-                  </FolderContent>
+          </div>
+        ) : (
+          <img
+            src={course?.img}
+            alt="img"
+            width={"100%"}
+            height={isMobile ? "350px" : "500px"}
+          ></img>
+        )}
+        <SubFolderDiv>
+          <h2>{course?.name}</h2>
+          {currentSubFolder &&
+            currentVideo &&
+            currentVideo.mimeType === "video/mp4" && (
+              <>
+                <div style={{ textAlign: "left" }}>Currently Playing</div>
+                {currentVideo.mimeType === "video/mp4" && (
+                  <b style={{ marginTop: "10px" }}>{` ${cleanFileName(
+                    currentSubFolder.name
+                  )} > ${cleanFileName(currentVideo.name)}`}</b>
                 )}
-              </Folder>
-            ))}
-        </RightContainer>
-      </Container>
-    </>
+              </>
+            )}
+        </SubFolderDiv>
+      </LeftContainer>
+
+      <RightContainer>
+        <h3 style={{ marginTop: "2px" }}>Contents</h3>
+        {subFolders &&
+          subFolders.map((subFolder) => (
+            <Folder key={subFolder.id}>
+              <FolderHeader
+                onClick={() => handleSubFolderSelect(subFolder)}
+                view={currentSubFolder === subFolder}
+              >
+                <span>
+                  {currentSubFolder === subFolder ? (
+                    <i
+                      class="fa fa-chevron-down"
+                      style={{ fontSize: "13px" }}
+                    ></i>
+                  ) : (
+                    <i
+                      class="fa fa-chevron-up"
+                      style={{ fontSize: "13px" }}
+                    ></i>
+                  )}
+                </span>
+                <span>{subFolder?.name && cleanFileName(subFolder.name)}</span>
+              </FolderHeader>
+              {currentSubFolder === subFolder && (
+                <FolderContent>
+                  {videoLoading && (
+                    <LoadingContainer>
+                      <LoadingLine />
+                    </LoadingContainer>
+                  )}
+                  {videos.map((video) => (
+                    <>
+                      {[
+                        "video/mp4",
+                        "application/octet-stream",
+                        "text/javascript",
+                        "text/x-url"
+                      ].includes(video.mimeType) ? (
+                        <VideoTitle
+                          key={video.id}
+                          highLight={currentVideo?.id === video?.id}
+                          onClick={() => handleVideoSelect(video)}
+                        >
+                          <span>
+                            <img
+                              src={ImageTheme[theme.type].play}
+                              alt="^"
+                              width={"20px"}
+                            ></img>
+                          </span>
+                          <span>{video?.name}</span>
+                        </VideoTitle>
+                      ) : (
+                        <VideoTitle
+                          key={video.id}
+                          onClick={() => {
+                            setHtml(true);
+                            window.open(
+                              `https://drive.google.com/file/d/${video.id}/view?usp=sharing`,
+                              "_blank"
+                            );
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <span>
+                            <img
+                              src={ImageTheme[theme.type].file}
+                              alt="^"
+                              width={"20px"}
+                            ></img>
+                          </span>
+                          <span>{cleanFileName(video.name)}</span>
+                        </VideoTitle>
+                      )}
+                    </>
+                  ))}
+                </FolderContent>
+              )}
+            </Folder>
+          ))}
+      </RightContainer>
+    </Container>
   );
 };
 

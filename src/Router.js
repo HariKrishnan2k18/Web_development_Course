@@ -13,9 +13,10 @@ export const Routers = ({ theme, setTheme }) => {
     <Router>
       <AppContainer>
         <SwitchButtonIcon>
-          <div>
-            {course && course.name}
-          </div>
+          {course &&
+            <div>
+              {course.name}
+            </div>}
           <div
             onClick={() =>
               theme === "dark" ? setTheme("light") : setTheme("dark")}

@@ -112,6 +112,8 @@ export const VideoTitle = styled.div`
   display: flex;
   flex-direction: row;
   gap: 16px;
+  color: ${props => props.highLight && "red"};
+  font-weight: ${props => props.highLight && "600"};
 `;
 
 const loadingAnimation = keyframes`
