@@ -13,11 +13,13 @@ function App() {
   };
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={obj[theme]}>
-        <Routers theme={theme} setTheme={setTheme} />
-      </ThemeProvider>
-    </Provider>
+    <React.StrictMode>
+      <Provider store={store}>
+        <ThemeProvider theme={obj[theme]}>
+          <Routers theme={theme} setTheme={setTheme} />
+        </ThemeProvider>
+      </Provider>
+    </React.StrictMode>
   );
 }
 

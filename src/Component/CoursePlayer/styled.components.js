@@ -5,9 +5,6 @@ export const AppContainer = styled.div`
   color: ${({ theme }) => theme.color};
   height: 100%;
   min-height: 100vh;
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
 `;
 
 export const SwitchButtonIcon = styled.div`
@@ -16,6 +13,7 @@ export const SwitchButtonIcon = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  gap: 30px;
   > div {
     padding: 20px;
     @media (max-width: 768px) {
@@ -49,6 +47,7 @@ export const Container = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 0px;
+    margin: 16px;
   }
 `;
 
@@ -170,5 +169,28 @@ export const VideoLoad = styled.div`
   background: ${({ theme }) => theme.frameloadingbackground};
   @media (max-width: 768px) {
     height: 350px;
+  }
+`;
+
+export const RemainingCourse = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  align-items: center;
+  text-align: center;
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid gray;
+    border-radius: 8px;
+    margin: 0px;
+    padding-bottom: 10px;
+    > a {
+      width: 80%;
+    }
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 `;

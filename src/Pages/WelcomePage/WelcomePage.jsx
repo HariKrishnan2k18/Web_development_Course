@@ -1,4 +1,5 @@
-import { useDispatch } from "react-redux";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useDispatch, useSelector } from "react-redux";
 import { fetchDataRequest } from "../../data/SubFolderSlice";
 import {
   CardContainer,
@@ -11,11 +12,11 @@ import { Courses } from "../../Courses/Courses";
 import { storeCourse } from "../../data/CurrentCourse";
 import { useEffect } from "react";
 
-function WelcomePage() {
+function WelcomePage({ setLogin }) {
   const dispatch = useDispatch();
+  const { user } = useSelector((s) => s.currentCourse);
   useEffect(() => {
     dispatch(storeCourse({}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Container>
@@ -29,7 +30,7 @@ function WelcomePage() {
               to="/course"
               availability={course.availability}
               onClick={(e) => {
-                if (course.availability) {
+                if (course.availability && user.user) {
                   dispatch(storeCourse(course));
                   dispatch(
                     fetchDataRequest({
@@ -37,6 +38,8 @@ function WelcomePage() {
                       API_KEY: course.apikey
                     })
                   );
+                } else if (!user?.user) {
+                  setLogin(true);
                 } else {
                   e.preventDefault();
                   alert("course unavailable");

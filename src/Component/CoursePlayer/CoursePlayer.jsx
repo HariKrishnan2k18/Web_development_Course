@@ -9,6 +9,7 @@ import {
   LoadingContainer,
   LoadingDiv,
   LoadingLine,
+  RemainingCourse,
   RightContainer,
   SubFolderDiv,
   VideoLoad,
@@ -20,13 +21,17 @@ import FileIconWhite from "../../Assets/Logo/file-button.svg";
 import PlayIconYellow from "../../Assets/Logo/play-button-yellow.svg";
 import FileIconYellow from "../../Assets/Logo/file-button-yellow.svg";
 import { useTheme } from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FourSquare, OrbitProgress } from "react-loading-indicators";
 import { cleanFileName, sortName } from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import axios from "axios";
+import { Courses } from "../../Courses/Courses";
+import { StartCourseButton } from "../../Pages/WelcomePage/styled.components";
+import { storeCourse } from "../../data/CurrentCourse";
+import { fetchDataRequest } from "../../data/SubFolderSlice";
 
 const ImageTheme = {
   light: {
@@ -41,6 +46,7 @@ const ImageTheme = {
 
 const VideoPlayer = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [subFolders, setSubFolders] = useState([]);
   const [videos, setVideos] = useState([]);
@@ -52,8 +58,7 @@ const VideoPlayer = () => {
   const navigate = useNavigate();
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
-
-  const { course } = useSelector((s) => s.currentCourse);
+  const { course, user } = useSelector((s) => s.currentCourse);
 
   useEffect(() => {
     if (isEmpty(course)) {
@@ -71,7 +76,7 @@ const VideoPlayer = () => {
     }
   }, [data, course]);
 
-  const handleVideoSelect = async (video) => {
+  const handleVideoSelect = async (video, subfolder) => {
     window.scrollTo({
       top: 0,
       behavior: "smooth"
@@ -79,6 +84,24 @@ const VideoPlayer = () => {
     setHtml(undefined);
     if (video.mimeType === "video/mp4") {
       if (video?.name !== currentVideo?.name) {
+        try {
+          const courses = user.courses.map((c) =>
+            c.id === course.id
+              ? {
+                  ...c,
+                  current_video: video,
+                  current_folder: currentSubFolder || subfolder
+                }
+              : c
+          );
+          await fetch(`http://localhost:8000/users/${user.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ courses })
+          });
+        } catch (error) {
+          console.error("Error updating play_video_id:", error);
+        }
         setCurrentVideo(video);
         setVideoOnload(true);
       }
@@ -137,6 +160,16 @@ const VideoPlayer = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (user.user) {
+      const data = user.courses.find((e) => e.id === course.id);
+      if (data) {
+        handleVideoSelect(data?.current_video, data?.current_folder);
+        setCurrentSubFolder(data?.current_folder);
+      }
+    }
+  }, [course?.name]);
   if (loading) {
     return (
       <LoadingDiv>
@@ -147,7 +180,6 @@ const VideoPlayer = () => {
   if (error) {
     return <div>Error ...</div>;
   }
-
   return (
     <Container>
       <LeftContainer>
@@ -174,11 +206,11 @@ const VideoPlayer = () => {
                   htmltext && `<html><body><pre>${htmltext}</pre></body></html>`
                 }
                 title={currentVideo.name}
-                width={"100%"}
                 onLoad={() => setVideoOnload(false)}
                 height={isMobile ? "350px" : "500px"}
                 style={{
-                  border: currentVideo.id ? "none" : "2px solid black",
+                  width: isMobile ? "95%" : "100%",
+                  border: "3px solid green",
                   color: theme.color,
                   background: theme.type === "dark" ? theme.color : "#f8f6f5"
                 }}
@@ -195,7 +227,10 @@ const VideoPlayer = () => {
             alt="img"
             width={"100%"}
             height={isMobile ? "350px" : "500px"}
-          ></img>
+            style={{
+              border: "3px solid green"
+            }}
+          />
         )}
         <SubFolderDiv>
           <h2>{course?.name}</h2>
@@ -204,14 +239,57 @@ const VideoPlayer = () => {
             currentVideo.mimeType === "video/mp4" && (
               <>
                 <div style={{ textAlign: "left" }}>Currently Playing</div>
-                {currentVideo.mimeType === "video/mp4" && (
-                  <b style={{ marginTop: "10px" }}>{` ${cleanFileName(
-                    currentSubFolder.name
-                  )} > ${cleanFileName(currentVideo.name)}`}</b>
+                {currentVideo?.mimeType === "video/mp4" && (
+                  <b style={{ marginTop: "10px" }}>
+                    {currentSubFolder?.name &&
+                      ` ${cleanFileName(
+                        currentSubFolder?.name
+                      )} > ${cleanFileName(currentVideo?.name)}`}
+                  </b>
                 )}
               </>
             )}
         </SubFolderDiv>
+        <div>
+          <h3>Remaining Courses</h3>
+          <RemainingCourse>
+            {Courses.filter((e) => e.id !== course.id)
+              .slice(0, 16)
+              .map((course) => (
+                <div>
+                  <img
+                    src={course.img}
+                    alt={course.name ? `${course.name} image` : "image"}
+                    width={"100%"}
+                    height={"150px"}
+                  ></img>
+                  <div style={{ height: "50px" }}>{course.name}</div>
+                  <StartCourseButton
+                    to="/course"
+                    availability={course.availability}
+                    onClick={(e) => {
+                      if (course.availability) {
+                        setCurrentSubFolder({});
+                        setCurrentVideo({});
+                        dispatch(storeCourse(course));
+                        dispatch(
+                          fetchDataRequest({
+                            FOLDER_ID: course.folderid,
+                            API_KEY: course.apikey
+                          })
+                        );
+                      } else {
+                        e.preventDefault();
+                        alert("course unavailable");
+                      }
+                    }}
+                  >
+                    Start Course
+                  </StartCourseButton>
+                </div>
+              ))}
+          </RemainingCourse>
+        </div>
       </LeftContainer>
 
       <RightContainer>
@@ -222,20 +300,16 @@ const VideoPlayer = () => {
               <FolderHeader
                 onClick={() => handleSubFolderSelect(subFolder)}
                 view={currentSubFolder === subFolder}
+                data-testid={`${subFolder?.id}`}
               >
-                <span>
-                  {currentSubFolder === subFolder ? (
-                    <i
-                      class="fa fa-chevron-down"
-                      style={{ fontSize: "13px" }}
-                    ></i>
-                  ) : (
-                    <i
-                      class="fa fa-chevron-up"
-                      style={{ fontSize: "13px" }}
-                    ></i>
-                  )}
-                </span>
+                <i
+                  class={
+                    currentSubFolder === subFolder
+                      ? "fa fa-chevron-down"
+                      : "fa fa-chevron-up"
+                  }
+                  style={{ fontSize: "13px" }}
+                />
                 <span>{subFolder?.name && cleanFileName(subFolder.name)}</span>
               </FolderHeader>
               {currentSubFolder === subFolder && (
