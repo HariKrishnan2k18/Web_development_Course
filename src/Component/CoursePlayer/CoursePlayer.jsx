@@ -59,6 +59,7 @@ const VideoPlayer = () => {
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
   const { course, user } = useSelector((s) => s.currentCourse);
+  const API_URL = String(process.env.REACT_APP_USER_API_URL);
 
   useEffect(() => {
     if (isEmpty(course)) {
@@ -86,7 +87,8 @@ const VideoPlayer = () => {
       if (video?.name !== currentVideo?.name) {
         try {
           const courses = user.courses.map((c) =>
-            c.id === course.id
+            // eslint-disable-next-line eqeqeq
+            c.id == course.id
               ? {
                   ...c,
                   current_video: video,
@@ -94,7 +96,7 @@ const VideoPlayer = () => {
                 }
               : c
           );
-          await fetch(`http://localhost:8000/users/${user.id}`, {
+          await fetch(`${API_URL}/users/${user.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ courses })
@@ -162,8 +164,9 @@ const VideoPlayer = () => {
   };
 
   useEffect(() => {
-    if (user.user) {
-      const data = user.courses.find((e) => e.id === course.id);
+    if (user?.user) {
+      // eslint-disable-next-line eqeqeq
+      const data = user.courses.find((e) => e.id == course.id);
       if (data) {
         handleVideoSelect(data?.current_video, data?.current_folder);
         setCurrentSubFolder(data?.current_folder);

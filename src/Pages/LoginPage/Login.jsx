@@ -12,24 +12,17 @@ import { storeUser } from "../../data/CurrentCourse";
 
 function LoginPage({ setLogin }) {
   const dispatch = useDispatch();
-  // const { user } = useSelector((s) => s.currentCourse);
+  const API_URL = String(process.env.REACT_APP_USER_API_URL);
   const handleSubmit = (event) => {
     event.stopPropagation();
     const formdata = new FormData(event.target);
-    console.log(formdata.get("username"), formdata.get("password"));
     axios
-      .get("http://localhost:8000/users")
-      .then((res) => res.data)
-      .then((res) =>
-        res.find(
-          (e) =>
-            e.user === formdata.get("username") &&
-            e.password === formdata.get("password")
-        )
-      )
-      .then((res) => {
-        dispatch(storeUser(res));
-      });
+      .post(`${API_URL}/users`, {
+        user: formdata.get("username"),
+        password: formdata.get("password")
+      })
+      .then((res) => dispatch(storeUser(res.data)));
+
     setLogin(false);
   };
   return (
