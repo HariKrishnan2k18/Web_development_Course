@@ -189,8 +189,11 @@ export const RemainingCourse = styled.div`
     > a {
       width: 80%;
     }
-    @media (max-width: 768px) {
-      display: none;
-    }
+  }
+`;
+
+export const RemainingCourseDiv = styled.div`
+  @media (max-width: 768px) {
+    display: none;
   }
 `;

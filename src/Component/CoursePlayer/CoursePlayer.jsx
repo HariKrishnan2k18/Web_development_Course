@@ -10,6 +10,7 @@ import {
   LoadingDiv,
   LoadingLine,
   RemainingCourse,
+  RemainingCourseDiv,
   RightContainer,
   SubFolderDiv,
   VideoLoad,
@@ -253,7 +254,7 @@ const VideoPlayer = () => {
               </>
             )}
         </SubFolderDiv>
-        <div>
+        <RemainingCourseDiv>
           <h3>Remaining Courses</h3>
           <RemainingCourse>
             {Courses.filter((e) => e.id !== course.id)
@@ -292,7 +293,7 @@ const VideoPlayer = () => {
                 </div>
               ))}
           </RemainingCourse>
-        </div>
+        </RemainingCourseDiv>
       </LeftContainer>
 
       <RightContainer>
