@@ -9,6 +9,7 @@ import Machine from "../Assets/images/Introduction to Machine Learning.webp";
 import GitGitHub from "../Assets/images/learn-git.webp";
 import Kotlin from "../Assets/images/Kotlin-Android-Tutorial.png";
 import AWS from "../Assets/images/AWS.jpg";
+import D3_JS from "../Assets/images/D3 JS.jpg"
 
 export const Courses = [
   {
@@ -21,11 +22,11 @@ export const Courses = [
   },
   {
     id: 2,
-    name: "The MERN full stack Guide",
-    folderid: "1dJiQEZzYd0gqgsDm0NJKXKonHuSpsbWO",
+    name: "Mastering data visualization in D3.js",
+    folderid: "1-1tJPxdRf15aIZw3wo-GQ4nBdWOtUfE2",
     apikey: "AIzaSyCZyxo0XOGuPUE2Zj9UOXsgQc6GFEqk-EA",
-    img: MERN,
-    availability: false
+    img: D3_JS,
+    availability: true
   },
   {
     id: 3,
@@ -97,6 +98,14 @@ export const Courses = [
     folderid: "",
     apikey: "",
     img: Kotlin,
+    availability: false
+  },
+  {
+    id: 11,
+    name: "The MERN full stack Guide",
+    folderid: "1dJiQEZzYd0gqgsDm0NJKXKonHuSpsbWO",
+    apikey: "AIzaSyCZyxo0XOGuPUE2Zj9UOXsgQc6GFEqk-EA",
+    img: MERN,
     availability: false
   }
 ];
