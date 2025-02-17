@@ -6,7 +6,7 @@ import {
   Container,
   CourseContainer,
   CourseName,
-  StartCourseButton
+  StartCourseButton,
 } from "./styled.components";
 import { Courses } from "../../Courses/Courses";
 import { storeCourse } from "../../data/CurrentCourse";
@@ -35,7 +35,7 @@ function WelcomePage({ setLogin }) {
                   dispatch(
                     fetchDataRequest({
                       FOLDER_ID: course.folderid,
-                      API_KEY: course.apikey
+                      API_KEY: course.apikey,
                     })
                   );
                 } else if (!user?.user) {

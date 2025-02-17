@@ -9,12 +9,12 @@ import {
   LoadingContainer,
   LoadingDiv,
   LoadingLine,
-  RemainingCourse,
-  RemainingCourseDiv,
+  // RemainingCourse,
+  // RemainingCourseDiv,
   RightContainer,
   SubFolderDiv,
   VideoLoad,
-  VideoTitle
+  VideoTitle,
 } from "./styled.components";
 import { isMobile } from "react-device-detect";
 import PlayIconWhite from "../../Assets/Logo/play-button.svg";
@@ -22,32 +22,32 @@ import FileIconWhite from "../../Assets/Logo/file-button.svg";
 import PlayIconYellow from "../../Assets/Logo/play-button-yellow.svg";
 import FileIconYellow from "../../Assets/Logo/file-button-yellow.svg";
 import { useTheme } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { FourSquare, OrbitProgress } from "react-loading-indicators";
 import { cleanFileName, sortName } from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import axios from "axios";
-import { Courses } from "../../Courses/Courses";
-import { StartCourseButton } from "../../Pages/WelcomePage/styled.components";
-import { storeCourse } from "../../data/CurrentCourse";
-import { fetchDataRequest } from "../../data/SubFolderSlice";
+// import { Courses } from "../../Courses/Courses";
+// import { StartCourseButton } from "../../Pages/WelcomePage/styled.components";
+// import { storeCourse } from "../../data/CurrentCourse";
+// import { fetchDataRequest } from "../../data/SubFolderSlice";
 
 const ImageTheme = {
   light: {
     play: PlayIconWhite,
-    file: FileIconWhite
+    file: FileIconWhite,
   },
   dark: {
     play: PlayIconYellow,
-    file: FileIconYellow
-  }
+    file: FileIconYellow,
+  },
 };
 
 const VideoPlayer = () => {
   const theme = useTheme();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [subFolders, setSubFolders] = useState([]);
   const [videos, setVideos] = useState([]);
@@ -81,26 +81,38 @@ const VideoPlayer = () => {
   const handleVideoSelect = async (video, subfolder) => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
     setHtml(undefined);
     if (video.mimeType === "video/mp4") {
       if (video?.name !== currentVideo?.name) {
         try {
-          const courses = user.courses.map((c) =>
-            // eslint-disable-next-line eqeqeq
-            c.id == course.id
-              ? {
-                  ...c,
+          const courseCheck = user.courses.find((e) => e.id === course.id);
+
+          const courses = courseCheck?.id
+            ? user.courses.map((c) =>
+                // eslint-disable-next-line eqeqeq
+                c.id == course.id
+                  ? {
+                      ...c,
+                      current_video: video,
+                      current_folder: currentSubFolder || subfolder,
+                    }
+                  : c
+              )
+            : [
+                {
+                  id: course.id,
                   current_video: video,
-                  current_folder: currentSubFolder || subfolder
-                }
-              : c
-          );
+                  current_folder: currentSubFolder || subfolder,
+                  courseName: course.name,
+                },
+                ...user.courses,
+              ];
           await fetch(`${API_URL}/users/${user.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ courses })
+            body: JSON.stringify({ courses }),
           });
         } catch (error) {
           console.error("Error updating play_video_id:", error);
@@ -148,8 +160,8 @@ const VideoPlayer = () => {
         const subFolderVideos = await fetchApiData({
           payload: {
             FOLDER_ID: subFolder.id,
-            API_KEY: course?.apikey
-          }
+            API_KEY: course?.apikey,
+          },
         });
         const modifiedContent = subFolderVideos.filter(
           (e) => e.mimeType !== "application/octet-stream"
@@ -158,7 +170,7 @@ const VideoPlayer = () => {
         setVideoLoading(false);
         setSubFolderVideo([
           ...storeSubFolderVideo,
-          { id: subFolder.id, data: sortName(modifiedContent) }
+          { id: subFolder.id, data: sortName(modifiedContent) },
         ]);
       }
     }
@@ -216,7 +228,7 @@ const VideoPlayer = () => {
                   width: isMobile ? "95%" : "100%",
                   border: "3px solid green",
                   color: theme.color,
-                  background: theme.type === "dark" ? theme.color : "#f8f6f5"
+                  background: theme.type === "dark" ? theme.color : "#f8f6f5",
                 }}
                 allow="autoplay"
                 allowFullScreen
@@ -232,7 +244,7 @@ const VideoPlayer = () => {
             width={"100%"}
             height={isMobile ? "350px" : "500px"}
             style={{
-              border: "3px solid green"
+              border: "3px solid green",
             }}
           />
         )}
@@ -254,7 +266,7 @@ const VideoPlayer = () => {
               </>
             )}
         </SubFolderDiv>
-        <RemainingCourseDiv>
+        {/* <RemainingCourseDiv>
           <h3>Remaining Courses</h3>
           <RemainingCourse>
             {Courses.filter((e) => e.id !== course.id)
@@ -293,7 +305,7 @@ const VideoPlayer = () => {
                 </div>
               ))}
           </RemainingCourse>
-        </RemainingCourseDiv>
+        </RemainingCourseDiv> */}
       </LeftContainer>
 
       <RightContainer>
@@ -329,7 +341,7 @@ const VideoPlayer = () => {
                         "video/mp4",
                         "application/octet-stream",
                         "text/javascript",
-                        "text/x-url"
+                        "text/x-url",
                       ].includes(video.mimeType) ? (
                         <VideoTitle
                           key={video.id}

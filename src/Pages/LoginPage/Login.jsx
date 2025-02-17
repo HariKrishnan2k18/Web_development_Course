@@ -1,48 +1,67 @@
-import axios from "axios";
 import {
   Username,
   Password,
   LoginButton,
   Container,
   LoginForm,
-  InnerForm
+  InnerForm,
 } from "./styled.components";
-import { useDispatch } from "react-redux";
-import { storeUser } from "../../data/CurrentCourse";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser } from "../../data/CurrentCourse";
+import { LoadingDiv } from "../../Component/CoursePlayer/styled.components";
+import { FourSquare } from "react-loading-indicators";
+import { useEffect } from "react";
 
 function LoginPage({ setLogin }) {
   const dispatch = useDispatch();
-  const API_URL = String(process.env.REACT_APP_USER_API_URL);
+  const { loadingUser, user, errorUser } = useSelector((s) => s.currentCourse);
+
   const handleSubmit = (event) => {
     event.stopPropagation();
     const formdata = new FormData(event.target);
-    axios
-      .post(`${API_URL}/users`, {
+    dispatch(
+      loadUser({
         user: formdata.get("username"),
-        password: formdata.get("password")
+        password: formdata.get("password"),
       })
-      .then((res) => dispatch(storeUser(res.data)));
-
-    setLogin(false);
+    );
   };
+  useEffect(() => {
+    if (user?.id) {
+      setLogin(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   return (
     <Container>
-      <LoginForm onClick={() => setLogin(false)} onSubmit={handleSubmit}>
-        <InnerForm onClick={(e) => e.stopPropagation()}>
-          <h2 style={{ color: "#8C55AA" }}> Sign In</h2>
-          <Username
-            placeholder="username"
-            type="text"
-            name="username"
-          ></Username>
-          <Password
-            placeholder="password"
-            type="password"
-            name="password"
-          ></Password>
-          <LoginButton type="submit">Login</LoginButton>
-        </InnerForm>
-      </LoginForm>
+      {loadingUser ? (
+        <LoadingDiv>
+          <FourSquare
+            color="#32cd32"
+            size="large"
+            text=""
+            textColor="#3a36a5"
+          />
+        </LoadingDiv>
+      ) : (
+        <LoginForm onClick={() => setLogin(false)} onSubmit={handleSubmit}>
+          <InnerForm onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ color: "#8C55AA" }}> Sign In</h2>
+            <Username
+              placeholder="username"
+              type="text"
+              name="username"
+            ></Username>
+            <Password
+              placeholder="password"
+              type="password"
+              name="password"
+            ></Password>
+            <LoginButton type="submit">Login</LoginButton>
+            {errorUser && <h3 style={{ color: "red" }}>Login failed</h3>}
+          </InnerForm>
+        </LoginForm>
+      )}
     </Container>
   );
 }
