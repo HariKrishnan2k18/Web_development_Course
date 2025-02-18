@@ -24,7 +24,7 @@ export const Courses = [
   {
     id: 2,
     name: "OpenAPI (Swagger) Specification for Software Developers",
-    folderid: "0YnGpaWNYguLihLndDXSo1xzp0vMr7o",
+    folderid: "1-25rQaW4fVi6jvJtdehTDoZUgH4EURFn",
     apikey: "AIzaSyCZyxo0XOGuPUE2Zj9UOXsgQc6GFEqk-EA",
     img: D3_JS,
     availability: true
