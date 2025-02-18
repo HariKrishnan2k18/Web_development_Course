@@ -23,8 +23,8 @@ export const Courses = [
   },
   {
     id: 2,
-    name: "Mastering data visualization in D3.js",
-    folderid: "1-1tJPxdRf15aIZw3wo-GQ4nBdWOtUfE2",
+    name: "OpenAPI (Swagger) Specification for Software Developers",
+    folderid: "0YnGpaWNYguLihLndDXSo1xzp0vMr7o",
     apikey: "AIzaSyCZyxo0XOGuPUE2Zj9UOXsgQc6GFEqk-EA",
     img: D3_JS,
     availability: true
