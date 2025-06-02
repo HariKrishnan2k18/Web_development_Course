@@ -23,10 +23,10 @@ export const Courses = [
   },
   {
     id: 2,
-    name: "OpenAPI (Swagger) Specification for Software Developers",
-    folderid: "1-25rQaW4fVi6jvJtdehTDoZUgH4EURFn",
-    apikey: "AIzaSyCZyxo0XOGuPUE2Zj9UOXsgQc6GFEqk-EA",
-    img: D3_JS,
+    name: "GCP Associate Cloud Engineer Certification Google Cloud",
+    folderid: "1EHwKZmDBlpNLpzBgRPBQCLK_2Vofebwr",
+    apikey: "AIzaSyBCHCqjPT5dn9x8M_PCEeoKSaLBu8CWRy4",
+    img: GCP,
     availability: true,
   },
   {
@@ -107,14 +107,6 @@ export const Courses = [
     folderid: "1R41m-1RWAsAeoYe5BPsbys42-OdEvXWY",
     apikey: "AIzaSyBCHCqjPT5dn9x8M_PCEeoKSaLBu8CWRy4",
     img: AWA_C03,
-    availability: true,
-  },
-  {
-    id: 13,
-    name: "GCP Associate Cloud Engineer Certification Google Cloud",
-    folderid: "1EHwKZmDBlpNLpzBgRPBQCLK_2Vofebwr",
-    apikey: "AIzaSyBCHCqjPT5dn9x8M_PCEeoKSaLBu8CWRy4",
-    img: GCP,
     availability: true,
   },
 ];
