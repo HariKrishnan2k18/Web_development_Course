@@ -8,7 +8,6 @@ import Machine from "../Assets/images/Introduction to Machine Learning.webp";
 import GitGitHub from "../Assets/images/learn-git.webp";
 import Generative_AI from "../Assets/images/Generative_AI.jpg";
 import AWS from "../Assets/images/AWS.jpg";
-import D3_JS from "../Assets/images/D3 JS.jpg";
 import Spring from "../Assets/images/Spring.jpeg";
 import JEST from "../Assets/images/Jest.jpg";
 
