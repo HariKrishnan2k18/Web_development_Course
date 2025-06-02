@@ -9,8 +9,6 @@ import {
   LoadingContainer,
   LoadingDiv,
   LoadingLine,
-  // RemainingCourse,
-  // RemainingCourseDiv,
   RightContainer,
   SubFolderDiv,
   VideoLoad,
@@ -29,10 +27,6 @@ import { fetchApiData } from "../../data/SubFolderSlice/api";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import axios from "axios";
-// import { Courses } from "../../Courses/Courses";
-// import { StartCourseButton } from "../../Pages/WelcomePage/styled.components";
-// import { storeCourse } from "../../data/CurrentCourse";
-// import { fetchDataRequest } from "../../data/SubFolderSlice";
 
 const ImageTheme = {
   light: {
@@ -47,7 +41,6 @@ const ImageTheme = {
 
 const VideoPlayer = () => {
   const theme = useTheme();
-  // const dispatch = useDispatch();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [subFolders, setSubFolders] = useState([]);
   const [videos, setVideos] = useState([]);
@@ -225,7 +218,7 @@ const VideoPlayer = () => {
                 onLoad={() => setVideoOnload(false)}
                 height={isMobile ? "350px" : "500px"}
                 style={{
-                  width: isMobile ? "95%" : "100%",
+                  width: "100%",
                   border: "3px solid green",
                   color: theme.color,
                   background: theme.type === "dark" ? theme.color : "#f8f6f5",

@@ -35,12 +35,15 @@ export const Password = styled.input`
 `;
 
 export const Container = styled.div`
-  position: fixed;
+  position: absolute;
+  top: 0;
   width: 100%;
+  z-index: 999;
+  overflow: hidden;
 `;
 
 export const LoginForm = styled.form`
-  position: relative;
+  /* position: relative; */
   background: #000000b0;
   display: flex;
   flex-direction: column;

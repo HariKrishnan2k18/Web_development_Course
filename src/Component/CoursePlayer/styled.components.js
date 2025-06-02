@@ -7,65 +7,37 @@ export const AppContainer = styled.div`
   min-height: 100vh;
 `;
 
-export const SwitchButtonIcon = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-  > div {
-    padding: 20px;
-    @media (max-width: 768px) {
-      padding-top: 0px;
-    }
-  }
-  > div:first-child {
-    font-weight: 700;
-    font-size: 18px;
-    width: 100%;
-    text-align: center;
-    @media (max-width: 768px) {
-      padding-right: 0px;
-    }
-  }
-  > div :last-child {
-    width: 30px;
-    cursor: pointer;
-    @media (max-width: 768px) {
-      padding-left: 0px;
-    }
-  }
-`;
-
 export const Container = styled.div`
   display: flex;
   height: 100%;
-  gap: ${props => (props.fullview ? "0px" : "24px")};
+  gap: ${(props) => (props.fullview ? "0px" : "24px")};
   width: 100%;
 
   @media (max-width: 768px) {
     flex-direction: column;
+    align-items: center;
     gap: 0px;
-    margin: 16px;
+    width: 100%;
   }
 `;
 
 export const LeftContainer = styled.div`
-  width: ${props => (props.fullview ? "100%" : "70%")};
+  width: ${(props) => (props.fullview ? "100%" : "70%")};
   padding: 10px;
   @media (max-width: 768px) {
     width: 100%;
     padding: 0px;
+    position: sticky;
+    top: 0;
   }
 `;
 
 export const RightContainer = styled.div`
   width: 30%;
   padding: 10px;
-  display: ${props => props.fullview && "none"};
+  display: ${(props) => props.fullview && "none"};
   @media (max-width: 768px) {
-    width: 100%;
+    width: 95%;
     padding: 0px;
   }
 `;
@@ -89,7 +61,7 @@ export const FolderHeader = styled.h4`
   flex-direction: row;
   gap: 24px;
   padding-left: 20px;
-  border-bottom: ${props => props.view && "1px solid #d1d7dc"};
+  border-bottom: ${(props) => props.view && "1px solid #d1d7dc"};
 `;
 
 export const FolderContent = styled.div`
@@ -111,8 +83,8 @@ export const VideoTitle = styled.div`
   display: flex;
   flex-direction: row;
   gap: 16px;
-  color: ${props => props.highLight && "red"};
-  font-weight: ${props => props.highLight && "600"};
+  color: ${(props) => props.highLight && "red"};
+  font-weight: ${(props) => props.highLight && "600"};
 `;
 
 const loadingAnimation = keyframes`
