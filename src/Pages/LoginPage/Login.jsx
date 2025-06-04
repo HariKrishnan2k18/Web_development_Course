@@ -25,7 +25,6 @@ function LoginPage({ setLogin }) {
       })
     );
   };
-  console.log({ user });
   useEffect(() => {
     if (user?.id) {
       setLogin(false);
@@ -41,12 +40,14 @@ function LoginPage({ setLogin }) {
             placeholder="username"
             type="text"
             name="username"
-          ></Username>
+            autoComplete="username"
+          />
           <Password
             placeholder="password"
             type="password"
+            autoComplete="current-password"
             name="password"
-          ></Password>
+          />
           <LoginButton type="submit">Login</LoginButton>
           {errorUser && <h3 style={{ color: "red" }}>Login failed</h3>}
         </InnerForm>

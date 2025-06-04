@@ -77,35 +77,20 @@ const VideoPlayer = () => {
       behavior: "smooth",
     });
     setHtml(undefined);
-    if (video.mimeType === "video/mp4") {
+    if (video?.mimeType === "video/mp4") {
       if (video?.name !== currentVideo?.name) {
         try {
-          const courseCheck = user.courses.find((e) => e.id === course.id);
-
-          const courses = courseCheck?.id
-            ? user.courses.map((c) =>
-                // eslint-disable-next-line eqeqeq
-                c.id == course.id
-                  ? {
-                      ...c,
-                      current_video: video,
-                      current_folder: currentSubFolder || subfolder,
-                    }
-                  : c
-              )
-            : [
-                {
-                  id: course.id,
-                  current_video: video,
-                  current_folder: currentSubFolder || subfolder,
-                  courseName: course.name,
-                },
-                ...user.courses,
-              ];
           await fetch(`${API_URL}/users/${user.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ courses }),
+            body: JSON.stringify({
+              courses: {
+                id: course.id,
+                current_video: video,
+                current_folder: currentSubFolder || subfolder,
+                courseName: course.name,
+              },
+            }),
           });
         } catch (error) {
           console.error("Error updating play_video_id:", error);
@@ -172,7 +157,7 @@ const VideoPlayer = () => {
   useEffect(() => {
     if (user?.user) {
       // eslint-disable-next-line eqeqeq
-      const data = user.courses.find((e) => e.id == course.id);
+      const data = user.courses.find((e) => e?.id == course?.id);
       if (data) {
         handleVideoSelect(data?.current_video, data?.current_folder);
         setCurrentSubFolder(data?.current_folder);
@@ -207,26 +192,26 @@ const VideoPlayer = () => {
             )}
             <div style={{ display: videoOnload && "none" }}>
               <iframe
-                src={
-                  currentVideo?.id &&
-                  `https://drive.google.com/file/d/${currentVideo.id}/preview`
-                }
-                srcDoc={
-                  htmltext && `<html><body><pre>${htmltext}</pre></body></html>`
-                }
+                {...(htmltext
+                  ? {
+                      srcDoc: `<html><body><pre>${htmltext}</pre></body></html>`,
+                    }
+                  : {
+                      src: `https://drive.google.com/file/d/${currentVideo?.id}/preview`,
+                    })}
                 title={currentVideo.name}
                 onLoad={() => setVideoOnload(false)}
                 height={isMobile ? "350px" : "500px"}
                 style={{
                   width: "100%",
-                  border: "3px solid green",
+                  border: isMobile ? "" : "3px solid green",
                   color: theme.color,
                   background: theme.type === "dark" ? theme.color : "#f8f6f5",
                 }}
                 allow="autoplay"
                 allowFullScreen
-                webkitallowfullscreen={isMobile}
-                mozallowfullscreen={isMobile}
+                webkitallowfullscreen={isMobile ? "true" : "false"}
+                mozallowfullscreen={isMobile ? "true" : "false"}
               />
             </div>
           </div>
@@ -304,15 +289,15 @@ const VideoPlayer = () => {
       <RightContainer>
         <h3 style={{ marginTop: "2px" }}>Contents</h3>
         {subFolders &&
-          subFolders.map((subFolder) => (
-            <Folder key={subFolder.id}>
+          subFolders.map((subFolder, index) => (
+            <Folder key={index}>
               <FolderHeader
                 onClick={() => handleSubFolderSelect(subFolder)}
-                view={currentSubFolder === subFolder}
+                view={currentSubFolder === subFolder ? "true" : "false"}
                 data-testid={`${subFolder?.id}`}
               >
                 <i
-                  class={
+                  className={
                     currentSubFolder === subFolder
                       ? "fa fa-chevron-down"
                       : "fa fa-chevron-up"
@@ -328,8 +313,8 @@ const VideoPlayer = () => {
                       <LoadingLine />
                     </LoadingContainer>
                   )}
-                  {videos.map((video) => (
-                    <>
+                  {videos.map((video, index) => (
+                    <React.Fragment key={index}>
                       {[
                         "video/mp4",
                         "application/octet-stream",
@@ -338,7 +323,9 @@ const VideoPlayer = () => {
                       ].includes(video.mimeType) ? (
                         <VideoTitle
                           key={video.id}
-                          highLight={currentVideo?.id === video?.id}
+                          highlight={(
+                            currentVideo?.id === video?.id
+                          )?.toString()}
                           onClick={() => handleVideoSelect(video)}
                         >
                           <span>
@@ -372,7 +359,7 @@ const VideoPlayer = () => {
                           <span>{cleanFileName(video.name)}</span>
                         </VideoTitle>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </FolderContent>
               )}

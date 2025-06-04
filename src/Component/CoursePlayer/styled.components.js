@@ -61,7 +61,7 @@ export const FolderHeader = styled.h4`
   flex-direction: row;
   gap: 24px;
   padding-left: 20px;
-  border-bottom: ${(props) => props.view && "1px solid #d1d7dc"};
+  border-bottom: ${(props) => props.view === "true" && "1px solid #d1d7dc"};
 `;
 
 export const FolderContent = styled.div`
@@ -83,8 +83,8 @@ export const VideoTitle = styled.div`
   display: flex;
   flex-direction: row;
   gap: 16px;
-  color: ${(props) => props.highLight && "red"};
-  font-weight: ${(props) => props.highLight && "600"};
+  color: ${(props) => props.highlight === "true" && "red"};
+  font-weight: ${(props) => props.highlight === "true" && "600"};
 `;
 
 const loadingAnimation = keyframes`

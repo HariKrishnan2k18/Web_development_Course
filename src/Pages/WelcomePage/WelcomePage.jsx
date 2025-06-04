@@ -22,6 +22,7 @@ import LoginPage from "../LoginPage/Login";
 import ThemeComponent from "../../Component/ThemeComponent/ThemeComponent";
 import { LoadingDiv } from "../../Component/CoursePlayer/styled.components";
 import { FaSearch, FaUserLock, FaUserPlus } from "react-icons/fa";
+import { isMobile } from "react-device-detect";
 
 function WelcomePage() {
   const dispatch = useDispatch();
@@ -32,11 +33,6 @@ function WelcomePage() {
   const [mobileInput, setMobileInput] = useState(false);
   useEffect(() => {
     dispatch(storeCourse({}));
-    document.body.style.overflow = login ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [login]);
 
   if (loadingUser) {
@@ -110,12 +106,27 @@ function WelcomePage() {
         )}
         <ThemeComponent />
       </NavBar>
-      <p style={{ textAlign: "left", width: "95%", margin: 0 }}>
-        <h2>Ready to reimagine your career?</h2>
-        <h4 style={{ color: themeDark ? "white" : "#595c73" }}>
+      <p style={{ textAlign: "left", width: "95%", margin: "10px" }}>
+        <span
+          style={{
+            display: "block",
+            fontSize: isMobile ? "16px" : "20px",
+            margin: isMobile ? "4px" : "10px",
+          }}
+        >
+          Ready to reimagine your career?
+        </span>
+        <span
+          style={{
+            color: themeDark ? "white" : "#595c73",
+            fontSize: isMobile ? "12px" : "16px",
+            margin: isMobile ? "4px" : "10px",
+            display: "flex",
+          }}
+        >
           Get the skills and real-world experience employers want with Career
           Accelerators.
-        </h4>
+        </span>
       </p>
       <CourseContainer>
         {Courses.filter((e) => e.name.toLowerCase().includes(inputValue)).map(
@@ -125,7 +136,7 @@ function WelcomePage() {
               <CourseName>{course.name}</CourseName>
               <StartCourseButton
                 to="/course"
-                availability={course.availability}
+                availability={course.availability.toString()}
                 onClick={(e) => {
                   if (course.availability && user.user) {
                     dispatch(storeCourse(course));
@@ -137,10 +148,6 @@ function WelcomePage() {
                     );
                   } else if (!user?.user) {
                     e.preventDefault();
-                    window.scrollTo({
-                      top: 0,
-                      behavior: "smooth",
-                    });
                     setLogin(true);
                   } else {
                     e.preventDefault();

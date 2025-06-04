@@ -129,9 +129,10 @@ export const CardContainer = styled.div`
 `;
 export const StartCourseButton = styled(Link)`
   border: ${(props) =>
-    props.availability ? "1px solid green" : "1px solid black"};
+    props.availability === "true" ? "1px solid green" : "1px solid black"};
   text-decoration: none;
-  background: ${(props) => (props.availability ? "#ff00ff" : "gray")};
+  background: ${(props) =>
+    props.availability === "true" ? "#ff00ff" : "gray"};
   color: white;
   height: 35px;
   display: flex;
@@ -140,7 +141,8 @@ export const StartCourseButton = styled(Link)`
   justify-content: center;
   border-radius: 8px;
   &:hover {
-    background: ${(props) => (props.availability ? "blue" : "black")};
+    background: ${(props) =>
+      props.availability === "true" ? "blue" : "black"};
   }
 `;
 

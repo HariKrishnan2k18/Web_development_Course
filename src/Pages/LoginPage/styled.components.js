@@ -35,7 +35,7 @@ export const Password = styled.input`
 `;
 
 export const Container = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   width: 100%;
   z-index: 999;
@@ -68,7 +68,7 @@ export const InnerForm = styled.div`
   gap: 20px;
   position: relative;
   border-radius: 50px;
-  border: 3px solid green;
+  border: 3px solid #8c55aa;
   @media (max-width: 768px) {
     width: 90%;
   }
