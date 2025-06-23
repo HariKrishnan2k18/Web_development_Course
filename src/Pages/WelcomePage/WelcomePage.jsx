@@ -31,9 +31,10 @@ function WelcomePage() {
   const [login, setLogin] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [mobileInput, setMobileInput] = useState(false);
+
   useEffect(() => {
     dispatch(storeCourse({}));
-  }, [login]);
+  }, []);
 
   if (loadingUser) {
     return (
@@ -138,8 +139,8 @@ function WelcomePage() {
                 to="/course"
                 availability={course.availability.toString()}
                 onClick={(e) => {
+                  dispatch(storeCourse(course));
                   if (course.availability && user.user) {
-                    dispatch(storeCourse(course));
                     dispatch(
                       fetchDataRequest({
                         FOLDER_ID: course.folderid,

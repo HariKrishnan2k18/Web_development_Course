@@ -1,16 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  course: {},
+  user: {},
+  loadingUser: false,
+  errorUser: "",
+};
+
 const subFolderSlice = createSlice({
   name: "currentCourse",
-  initialState: {
-    course: {},
-    user: {},
-    loadingUser: false,
-    errorUser: "",
-  },
+  initialState,
   reducers: {
+    resetUser: () => initialState,
     loadUser: (state, action) => {
-      state.loadingUser = true
+      state.loadingUser = true;
     },
     storeCourse: (state, action) => {
       state.course = action.payload;
@@ -22,10 +25,11 @@ const subFolderSlice = createSlice({
     errorUser: (state, action) => {
       state.loadingUser = false;
       state.errorUser = "API Failure";
-    }
-  }
+    },
+  },
 });
 
-export const { storeCourse, storeUser, errorUser, loadUser } = subFolderSlice.actions;
+export const { storeCourse, storeUser, errorUser, loadUser, resetUser } =
+  subFolderSlice.actions;
 
 export default subFolderSlice.reducer;
