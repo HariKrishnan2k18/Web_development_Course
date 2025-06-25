@@ -15,6 +15,5 @@ export const fetchApiData = async ({ payload }) => {
       apiKey: payload.API_KEY,
     })
     .then((res) => res.data);
-  // console.log({ response });
   return response;
 };

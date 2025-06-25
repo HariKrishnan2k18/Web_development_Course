@@ -23,12 +23,14 @@ import ThemeComponent from "../../Component/ThemeComponent/ThemeComponent";
 import { LoadingDiv } from "../../Component/CoursePlayer/styled.components";
 import { FaSearch, FaUserLock, FaUserPlus } from "react-icons/fa";
 import { isMobile } from "react-device-detect";
+import RegisterPage from "../RegisterPage";
 
 function WelcomePage() {
   const dispatch = useDispatch();
   const { user, loadingUser } = useSelector((s) => s.currentCourse);
   const { themeDark } = useSelector((s) => s.theme);
   const [login, setLogin] = useState(false);
+  const [register, setRegister] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [mobileInput, setMobileInput] = useState(false);
 
@@ -47,6 +49,7 @@ function WelcomePage() {
   return (
     <Container>
       {login && <LoginPage setLogin={setLogin} />}
+      {register && <RegisterPage setRegister={setRegister} />}
       <NavBarMobile>
         {!user?.user ? (
           <span style={{ display: mobileInput && "none" }}>Web Course</span>
@@ -77,7 +80,7 @@ function WelcomePage() {
           )}
           {!user?.user && !mobileInput && (
             <>
-              <FaUserPlus />
+              <FaUserPlus onClick={() => setRegister(true)} />
               <FaUserLock onClick={() => setLogin(true)} />
             </>
           )}
@@ -102,7 +105,12 @@ function WelcomePage() {
             >
               Login
             </LoginButton>
-            <SignupButton style={{ marginTop: "0px" }}>Signup</SignupButton>
+            <SignupButton
+              onClick={() => setRegister(true)}
+              style={{ marginTop: "0px" }}
+            >
+              Signup
+            </SignupButton>
           </>
         )}
         <ThemeComponent />

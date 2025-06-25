@@ -8,7 +8,7 @@ export const LoginButton = styled.button`
   border: 0;
   padding: 10px 40px;
   box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
-  margin-top: 20px;
+  margin: 20px;
 `;
 
 export const Username = styled.input`

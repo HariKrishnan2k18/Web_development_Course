@@ -82,6 +82,7 @@ export const SignupButton = styled.button`
   border-radius: 1em;
   box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
   background: linear-gradient(to right, #9c27b0, #e040fb);
+  cursor: pointer;
 `;
 export const UserName = styled.h3`
   padding: 4px 20px;

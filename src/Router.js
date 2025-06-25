@@ -6,11 +6,13 @@ import VideoPlayer from "./Component/CoursePlayer/CoursePlayer";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./utils/theme";
 import { useSelector } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
 export const Routers = () => {
   const { themeDark } = useSelector((s) => s.theme);
   return (
     <ThemeProvider theme={themeDark ? darkTheme : lightTheme}>
+      <Toaster position="top-center" />
       <Router>
         <AppContainer>
           <Routes>

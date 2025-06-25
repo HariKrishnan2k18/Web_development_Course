@@ -108,4 +108,12 @@ export const Courses = [
     img: AWA_C03,
     availability: true,
   },
+  {
+    id: 13,
+    name: "Coursera Generative AI For Everyone FCO",
+    folderid: "1QZSEhceF7_y8t6T5mt_o0GY4gUISVdLF",
+    apikey: "AIzaSyBCHCqjPT5dn9x8M_PCEeoKSaLBu8CWRy4",
+    img: Generative_AI,
+    availability: true,
+  },
 ];
