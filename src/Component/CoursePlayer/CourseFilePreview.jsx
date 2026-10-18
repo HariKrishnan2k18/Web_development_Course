@@ -4,6 +4,7 @@ import { useTheme } from "styled-components";
 import { OrbitProgress } from "react-loading-indicators";
 import { FaRedoAlt, FaExternalLinkAlt } from "react-icons/fa";
 import { fetchFileContent } from "../../data/SubFolderSlice/api";
+import { API_URL } from "../../utils/apiUrl";
 import { BackButton, DrivePopoutCover, VideoLoad, VideoWrapper, PreviewFrame, PreviewFilename, PreviewActions, PreviewAction } from "./styled.components";
 
 const isHtml = (file) =>
@@ -102,7 +103,7 @@ export default function CourseFilePreview({ file }) {
           <video
             key={previewKey}
             title={file.name || "Course video"}
-            src={`${process.env.REACT_APP_USER_API_URL}/coursedetails/files/${encodeURIComponent(file.id)}/video`}
+            src={`${API_URL}/coursedetails/files/${encodeURIComponent(file.id)}/video`}
             controls
             playsInline
             preload="metadata"

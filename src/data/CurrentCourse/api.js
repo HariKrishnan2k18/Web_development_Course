@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = String(process.env.REACT_APP_USER_API_URL);
+import { API_URL } from "../../utils/apiUrl";
 export const getUserData = async ({ payload }) => {
   const response = axios
     .post(`${API_URL}/users`, {

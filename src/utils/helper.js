@@ -82,3 +82,5 @@ export const formatTotalCourseDuration = (folderVideosMap) => {
   }
   return `${mins}m total length`;
 };
+
+export { getApiUrl, API_URL, isLocal } from "./apiUrl";

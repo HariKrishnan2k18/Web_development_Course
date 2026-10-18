@@ -29,6 +29,7 @@ import {
 } from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../utils/apiUrl";
 import { isEmpty } from "lodash";
 import ContentList from "../ContentList/ContentList";
 import CourseFilePreview from "./CourseFilePreview";
@@ -49,7 +50,6 @@ const VideoPlayer = () => {
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
   const { course, user } = useSelector((s) => s.currentCourse);
-  const API_URL = String(process.env.REACT_APP_USER_API_URL);
 
   // Initialize folders when course data arrives
   useEffect(() => {
