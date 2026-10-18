@@ -38,6 +38,15 @@ export default function CourseFilePreview({ file }) {
   const textPreview = isText(file) && !useDrive;
   const previewKey = `${file.id}-${attempt}-${textPreview}-${nativeVideo}`;
   const current = preview?.key === previewKey ? preview : null;
+  const [finishedLoaderKey, setFinishedLoaderKey] = useState(null);
+  const showVideoLoader = video && finishedLoaderKey !== previewKey && !current?.error;
+
+  useEffect(() => {
+    if (!video) return;
+    setFinishedLoaderKey(null);
+    const timer = window.setTimeout(() => setFinishedLoaderKey(previewKey), 2000);
+    return () => window.clearTimeout(timer);
+  }, [video, previewKey]);
 
 
   useEffect(() => {
@@ -87,7 +96,7 @@ export default function CourseFilePreview({ file }) {
         </PreviewAction>
       </PreviewActions>
       <VideoWrapper $preview $video={video} aria-busy={current?.loading !== false}>
-        {(!current || current.loading) && (
+        {(showVideoLoader || (!video && (!current || current.loading))) && (
           <VideoLoad style={{ position: "absolute", inset: 0, height: "100%", zIndex: 1, pointerEvents: "none" }}>
             <OrbitProgress variant="dotted" color="#8b5cf6" size="medium" text="" textColor="" />
           </VideoLoad>
