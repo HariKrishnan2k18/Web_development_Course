@@ -1,66 +1,158 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   LeftContainer,
   LoadingDiv,
   RightContainer,
   SubFolderDiv,
-  VideoLoad,
+  VideoWrapper,
+  NowPlayingBar,
+  NowPlayingLabel,
+  NowPlayingTitle,
+  CourseTitleSection,
+  BackButton,
+  CourseContentHeader,
+  HeaderTitle,
+  HeaderMetaRow,
+  HeaderStats,
+  ExpandAllButton,
 } from "./styled.components";
 import { isMobile } from "react-device-detect";
 import { useTheme } from "styled-components";
 import { useSelector } from "react-redux";
-import { FourSquare, OrbitProgress } from "react-loading-indicators";
-import { cleanFileName, sortName } from "../../utils/helper";
+import { FourSquare } from "react-loading-indicators";
+import {
+  cleanFileName,
+  sortName,
+  formatTotalCourseDuration,
+} from "../../utils/helper";
 import { fetchApiData } from "../../data/SubFolderSlice/api";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
-import axios from "axios";
 import ContentList from "../ContentList/ContentList";
+import CourseFilePreview from "./CourseFilePreview";
+import { FaArrowLeft } from "react-icons/fa";
 
 const VideoPlayer = () => {
   const theme = useTheme();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [subFolders, setSubFolders] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const [expandedFolderIds, setExpandedFolderIds] = useState([]);
+  const [folderVideosMap, setFolderVideosMap] = useState({});
+  const [folderLoadingMap, setFolderLoadingMap] = useState({});
   const [currentSubFolder, setCurrentSubFolder] = useState(null);
-  const [storeSubFolderVideo, setSubFolderVideo] = useState([]);
-  const [videoLoading, setVideoLoading] = useState(false);
-  const [videoOnload, setVideoOnload] = useState(false);
-  const [htmltext, setHtml] = useState("");
   const navigate = useNavigate();
+
+  const prefetchingRef = useRef(false);
+  const restoredCourseRef = useRef(null);
 
   const { loading, data, error } = useSelector((s) => s.subFolderData);
   const { course, user } = useSelector((s) => s.currentCourse);
   const API_URL = String(process.env.REACT_APP_USER_API_URL);
 
+  // Initialize folders when course data arrives
   useEffect(() => {
     if (isEmpty(course)) {
       navigate("/");
     } else if (Array.isArray(data)) {
-      const subFolders =
-        data &&
-        data.filter(
-          (file) => file.mimeType === "application/vnd.google-apps.folder",
-        );
-      const videos =
-        data && data.filter((file) => file.mimeType === "video/mp4");
+      const folders = data.filter(
+        (file) => file.mimeType === "application/vnd.google-apps.folder"
+      );
+      const sorted = sortName(folders);
+      setSubFolders(sorted);
 
-      setSubFolders(sortName(subFolders));
-      setVideos(videos);
+      // Default expand the first folder if none expanded yet
+      if (sorted.length > 0 && expandedFolderIds.length === 0) {
+        setExpandedFolderIds([sorted[0].id]);
+        fetchFolderVideos(sorted[0].id);
+      }
     }
   }, [data, course]);
 
+  // Fetch videos for a specific folder
+  const fetchFolderVideos = async (folderId) => {
+    if (folderVideosMap[folderId]) return folderVideosMap[folderId];
+
+    setFolderLoadingMap((prev) => ({ ...prev, [folderId]: true }));
+    try {
+      const res = await fetchApiData({
+        payload: {
+          FOLDER_ID: folderId,
+          API_KEY: course?.apikey,
+        },
+      });
+      const sortedVideos = sortName(res || []);
+      setFolderVideosMap((prev) => ({
+        ...prev,
+        [folderId]: sortedVideos,
+      }));
+      return sortedVideos;
+    } catch (err) {
+      console.error("Error loading folder videos:", folderId, err);
+      return [];
+    } finally {
+      setFolderLoadingMap((prev) => ({ ...prev, [folderId]: false }));
+    }
+  };
+
+  // Prefetch remaining folders in background so timings and counts populate smoothly
+  useEffect(() => {
+    if (subFolders.length > 0 && !prefetchingRef.current) {
+      prefetchingRef.current = true;
+      let cancelled = false;
+
+      const prefetch = async () => {
+        for (const sf of subFolders) {
+          if (cancelled) break;
+          if (!folderVideosMap[sf.id]) {
+            try {
+              const res = await fetchApiData({
+                payload: {
+                  FOLDER_ID: sf.id,
+                  API_KEY: course?.apikey,
+                },
+              });
+              if (!cancelled && res) {
+                setFolderVideosMap((prev) => ({
+                  ...prev,
+                  [sf.id]: sortName(res),
+                }));
+              }
+            } catch (e) {
+              // ignore prefetch failure
+            }
+          }
+        }
+      };
+
+      prefetch();
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [subFolders]);
+
+  // Videos and supporting files share the same viewing area.
   const handleVideoSelect = async (video, subfolder) => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-    setHtml(undefined);
-    if (video?.mimeType === "video/mp4") {
-      if (video?.name !== currentVideo?.name) {
-        try {
+    if (!video?.id) return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const activeFolder = subfolder || currentSubFolder;
+    if (activeFolder) {
+      setCurrentSubFolder(activeFolder);
+      // Ensure the folder containing this video stays expanded
+      setExpandedFolderIds((prev) =>
+        prev.includes(activeFolder.id) ? prev : [...prev, activeFolder.id]
+      );
+    }
+
+    if (video.id === currentVideo?.id) return;
+    setCurrentVideo(video);
+
+    // Viewing a resource must not replace the learner's last video progress.
+    if (video.mimeType?.startsWith("video/")) {
+      try {
+        if (user?.id) {
           await fetch(`${API_URL}/users/${user.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -68,224 +160,226 @@ const VideoPlayer = () => {
               courses: {
                 id: course.id,
                 current_video: video,
-                current_folder: currentSubFolder || subfolder,
+                current_folder: activeFolder,
                 courseName: course.name,
               },
             }),
           });
-        } catch (error) {
-          console.error("Error updating play_video_id:", error);
         }
-        setCurrentVideo(video);
-        setVideoOnload(true);
+      } catch (err) {
+        console.error("Error updating play_video_id:", err);
       }
-    } else if (
-      ["application/octet-stream", "text/javascript", "text/x-url"].includes(
-        video.mimeType,
-      )
-    ) {
-      setVideoOnload(true);
-      setCurrentVideo({});
-      try {
-        const res = await axios.get(
-          `https://www.googleapis.com/drive/v3/files/${video.id}?alt=media&key=${course.apikey}`,
-        );
-        setHtml(res.data);
-      } catch (error) {
-        setVideoOnload(false);
-        const link = document.createElement("a");
-        link.href = `https://drive.google.com/file/d/${video.id}/view?usp=sharing`;
-        link.target = "_blank";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    } else {
     }
   };
 
-  const handleSubFolderSelect = async (subFolder) => {
-    if (subFolder === currentSubFolder) {
-      setCurrentSubFolder(null);
+  // Toggle individual section accordion
+  const handleToggleFolder = (folder) => {
+    const isOpen = expandedFolderIds.includes(folder.id);
+    if (isOpen) {
+      setExpandedFolderIds((prev) => prev.filter((id) => id !== folder.id));
     } else {
-      setVideos([]);
-      setVideoLoading(true);
-      setCurrentSubFolder(subFolder);
-      const data = storeSubFolderVideo.find((e) => e.id === subFolder.id);
-      if (data) {
-        setVideos([...data.data]);
-        setVideoLoading(false);
-      } else {
-        const subFolderVideos = await fetchApiData({
-          payload: {
-            FOLDER_ID: subFolder.id,
-            API_KEY: course?.apikey,
-          },
+      setExpandedFolderIds((prev) => [...prev, folder.id]);
+      if (!folderVideosMap[folder.id]) {
+        fetchFolderVideos(folder.id);
+      }
+    }
+  };
+
+  // Check if all sections are expanded
+  const allExpanded =
+    subFolders.length > 0 &&
+    subFolders.every((f) => expandedFolderIds.includes(f.id));
+
+  // Toggle "Expand all sections" / "Collapse all sections"
+  const handleToggleAllSections = async () => {
+    if (allExpanded) {
+      setExpandedFolderIds([]);
+    } else {
+      const allIds = subFolders.map((f) => f.id);
+      setExpandedFolderIds(allIds);
+
+      // Fetch any un-fetched folders in parallel
+      const missing = subFolders.filter((f) => !folderVideosMap[f.id]);
+      if (missing.length > 0) {
+        setFolderLoadingMap((prev) => {
+          const next = { ...prev };
+          missing.forEach((f) => (next[f.id] = true));
+          return next;
         });
-        const modifiedContent = subFolderVideos.filter(
-          (e) => e.mimeType !== "application/octet-stream",
+
+        await Promise.all(
+          missing.map(async (f) => {
+            try {
+              const res = await fetchApiData({
+                payload: {
+                  FOLDER_ID: f.id,
+                  API_KEY: course?.apikey,
+                },
+              });
+              setFolderVideosMap((prev) => ({
+                ...prev,
+                [f.id]: sortName(res || []),
+              }));
+            } catch (e) {
+              console.error("Error fetching folder in expand-all:", f.name, e);
+            } finally {
+              setFolderLoadingMap((prev) => ({
+                ...prev,
+                [f.id]: false,
+              }));
+            }
+          })
         );
-        setVideos(sortName(modifiedContent));
-        setVideoLoading(false);
-        setSubFolderVideo([
-          ...storeSubFolderVideo,
-          { id: subFolder.id, data: sortName(modifiedContent) },
-        ]);
       }
     }
   };
 
+  // Restore saved course progress if user had one
   useEffect(() => {
-    if (user?.user) {
+    if (
+      !loading && !error && user?.user && course?.id &&
+      restoredCourseRef.current !== course.id
+    ) {
+      restoredCourseRef.current = course.id;
       // eslint-disable-next-line eqeqeq
-      const data = user.courses.find((e) => e?.id == course?.id);
-      if (data) {
+      const data = user.courses?.find((e) => e?.id == course?.id);
+      if (data?.current_video) {
         handleVideoSelect(data?.current_video, data?.current_folder);
-        setCurrentSubFolder(data?.current_folder);
+        if (data?.current_folder) {
+          setCurrentSubFolder(data.current_folder);
+          setExpandedFolderIds((prev) =>
+            prev.includes(data.current_folder.id)
+              ? prev
+              : [...prev, data.current_folder.id]
+          );
+          fetchFolderVideos(data.current_folder.id);
+        }
       }
     }
-  }, [course?.name]);
+  }, [loading, error, course?.id, user]);
+
+  const isVideoSelected = currentVideo?.mimeType?.startsWith("video/");
+
+  // Compute total lectures and total course length
+  const totalLecturesCount = Object.values(folderVideosMap).reduce(
+    (acc, list) =>
+      acc +
+      (Array.isArray(list)
+        ? list.filter((file) => file.mimeType === "video/mp4").length
+        : 0),
+    0
+  );
+  const totalDurationText = formatTotalCourseDuration(folderVideosMap);
+
   if (loading) {
     return (
       <LoadingDiv>
-        <FourSquare color="#32cd32" size="large" text="" textColor="#3a36a5" />
+        <FourSquare color="#8b5cf6" size="large" text="" textColor="#ec4899" />
       </LoadingDiv>
     );
   }
   if (error) {
-    return <div>Error ...</div>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "60vh",
+          flexDirection: "column",
+          gap: "16px",
+          color: theme.colorMuted,
+          fontFamily: "Inter, sans-serif",
+        }}
+      >
+        <span style={{ fontSize: "48px" }}>⚠️</span>
+        <span style={{ fontSize: "16px", fontWeight: 600 }}>
+          Failed to load course content
+        </span>
+        <BackButton onClick={() => navigate("/")}>
+          <FaArrowLeft /> Back to Courses
+        </BackButton>
+      </div>
+    );
   }
-  return (
-    <Container>
-      <LeftContainer>
-        {currentVideo || htmltext ? (
-          <div style={{ marginTop: !isMobile && "32px" }}>
-            {videoOnload && (
-              <VideoLoad>
-                <OrbitProgress
-                  variant="dotted"
-                  color="#32cd32"
-                  size="medium"
-                  text=""
-                  textColor=""
-                />
-              </VideoLoad>
-            )}
-            <div style={{ display: videoOnload && "none" }}>
-              <iframe
-                {...(htmltext
-                  ? {
-                      srcDoc: `<html><body><pre>${htmltext}</pre></body></html>`,
-                    }
-                  : {
-                      src: `https://drive.google.com/file/d/${currentVideo?.id}/preview`,
-                    })}
-                title={currentVideo?.name}
-                onLoad={() => setVideoOnload(false)}
-                height={isMobile ? "350px" : "500px"}
-                style={{
-                  width: "100%",
-                  border: isMobile ? "" : "3px solid green",
-                  color: theme.color,
-                  background: theme.type === "dark" ? theme.color : "#f8f6f5",
-                }}
-                allow="autoplay"
-                allowFullScreen
-                webkitallowfullscreen={isMobile ? "true" : "false"}
-                mozallowfullscreen={isMobile ? "true" : "false"}
-              />
-            </div>
-          </div>
-        ) : (
-          <img
-            src={`data:image/jpeg;base64,${course.image}`}
-            alt="img"
-            width={"100%"}
-            height={isMobile ? "350px" : "500px"}
-            style={{
-              border: "3px solid green",
-            }}
-          />
-        )}
-        <SubFolderDiv>
-          <h2>{course?.name}</h2>
-          {currentSubFolder &&
-            currentVideo &&
-            currentVideo.mimeType === "video/mp4" && (
-              <>
-                <div style={{ textAlign: "left" }}>Currently Playing</div>
-                {currentVideo?.mimeType === "video/mp4" && (
-                  <b style={{ marginTop: "10px" }}>
-                    {currentSubFolder?.name &&
-                      ` ${cleanFileName(
-                        currentSubFolder?.name,
-                      )} > ${cleanFileName(currentVideo?.name)}`}
-                  </b>
-                )}
-              </>
-            )}
-        </SubFolderDiv>
-        {/* <RemainingCourseDiv>
-          <h3>Remaining Courses</h3>
-          <RemainingCourse>
-            {Courses.filter((e) => e.id !== course.id)
-              .slice(0, 16)
-              .map((course) => (
-                <div>
-                  <img
-                    src={course.img}
-                    alt={course.name ? `${course.name} image` : "image"}
-                    width={"100%"}
-                    height={"150px"}
-                  ></img>
-                  <div style={{ height: "50px" }}>{course.name}</div>
-                  <StartCourseButton
-                    to="/course"
-                    availability={course.availability}
-                    onClick={(e) => {
-                      if (course.availability) {
-                        setCurrentSubFolder({});
-                        setCurrentVideo({});
-                        dispatch(storeCourse(course));
-                        dispatch(
-                          fetchDataRequest({
-                            FOLDER_ID: course.folderid,
-                            API_KEY: course.apikey
-                          })
-                        );
-                      } else {
-                        e.preventDefault();
-                        alert("course unavailable");
-                      }
-                    }}
-                  >
-                    Start Course
-                  </StartCourseButton>
-                </div>
-              ))}
-          </RemainingCourse>
-        </RemainingCourseDiv> */}
-      </LeftContainer>
 
-      <RightContainer>
-        <h3 style={{ marginTop: "2px" }}>Contents</h3>
-        {subFolders &&
-          subFolders.map((subFolder, index) => (
-            <ContentList
-              key={index}
-              handleSubFolderSelect={handleSubFolderSelect}
-              subFolder={subFolder}
-              currentSubFolder={currentSubFolder}
-              cleanFileName={cleanFileName}
-              videoLoading={videoLoading}
-              setHtml={setHtml}
-              videos={videos}
-              currentVideo={currentVideo}
-              handleVideoSelect={handleVideoSelect}
-            />
-          ))}
-      </RightContainer>
-    </Container>
+  return (
+    <>
+      <Container>
+        {/* ── Left: Video Panel ── */}
+        <LeftContainer>
+          {currentVideo?.id ? (
+            <CourseFilePreview key={currentVideo.id} file={currentVideo} />
+          ) : (
+            <VideoWrapper>
+              <img
+                src={`data:image/jpeg;base64,${course.image}`}
+                alt={course.name}
+                style={{
+                  height: isMobile ? "220px" : "500px",
+                  objectFit: "cover",
+                }}
+              />
+            </VideoWrapper>
+          )}
+
+          {/* Course title (desktop) */}
+          <CourseTitleSection>
+            <h2>{course?.name}</h2>
+          </CourseTitleSection>
+
+          {/* Now Playing bar */}
+          {currentSubFolder && currentVideo && (
+            <NowPlayingBar>
+              <NowPlayingLabel>{isVideoSelected ? "▶ Now Playing" : "Now Viewing"}</NowPlayingLabel>
+              <NowPlayingTitle>
+                {currentSubFolder?.name &&
+                  `${cleanFileName(currentSubFolder.name)} › ${cleanFileName(
+                    currentVideo?.name
+                  )}`}
+              </NowPlayingTitle>
+            </NowPlayingBar>
+          )}
+
+          <SubFolderDiv />
+        </LeftContainer>
+
+        {/* ── Right: Contents Panel (Udemy Style) ── */}
+        <RightContainer>
+          <CourseContentHeader>
+            <HeaderTitle>Course content</HeaderTitle>
+            <HeaderMetaRow>
+              <HeaderStats>
+                {subFolders.length}{" "}
+                {subFolders.length === 1 ? "section" : "sections"}
+                {totalLecturesCount > 0 && ` • ${totalLecturesCount} lectures`}
+                {totalDurationText && ` • ${totalDurationText}`}
+              </HeaderStats>
+              {subFolders.length > 0 && (
+                <ExpandAllButton onClick={handleToggleAllSections}>
+                  {allExpanded ? "Collapse all sections" : "Expand all sections"}
+                </ExpandAllButton>
+              )}
+            </HeaderMetaRow>
+          </CourseContentHeader>
+
+          {subFolders &&
+            subFolders.map((subFolder, index) => (
+              <ContentList
+                key={subFolder.id || index}
+                subFolder={subFolder}
+                isOpen={expandedFolderIds.includes(subFolder.id)}
+                onToggle={() => handleToggleFolder(subFolder)}
+                videos={folderVideosMap[subFolder.id] || []}
+                isLoading={!!folderLoadingMap[subFolder.id]}
+                currentVideo={currentVideo}
+                handleVideoSelect={handleVideoSelect}
+                cleanFileName={cleanFileName}
+              />
+            ))}
+        </RightContainer>
+      </Container>
+    </>
   );
 };
 

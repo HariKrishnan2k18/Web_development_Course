@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchDataRequest } from "../../data/SubFolderSlice";
 import {
   CardContainer,
+  CardImageWrapper,
+  CardBody,
   Container,
   CourseContainer,
   CourseName,
@@ -10,9 +12,17 @@ import {
   LoginButton,
   UserName,
   NavBar,
+  NavBrand,
+  NavLink,
+  NavSpacer,
   SearchInput,
+  SearchWrapper,
   SignupButton,
   NavBarMobile,
+  HeroSection,
+  HeroTitle,
+  HeroSubtitle,
+  IconButton,
 } from "./styled.components";
 import {
   storeCourse,
@@ -25,7 +35,6 @@ import LoginPage from "../LoginPage/Login";
 import ThemeComponent from "../../Component/ThemeComponent/ThemeComponent";
 import { LoadingDiv } from "../../Component/CoursePlayer/styled.components";
 import { FaSearch, FaUserLock, FaUserPlus } from "react-icons/fa";
-import { isMobile } from "react-device-detect";
 import RegisterPage from "../RegisterPage";
 import { isEmpty } from "lodash";
 
@@ -43,6 +52,7 @@ function WelcomePage() {
   const [mobileInput, setMobileInput] = useState(false);
   const details = JSON.parse(sessionStorage.getItem("courseDetails"));
   const courseDetails = !isEmpty(getCourse) ? getCourse : details || [];
+
   useEffect(() => {
     if (details) {
       storeCourseDetails(details);
@@ -54,7 +64,7 @@ function WelcomePage() {
   if (loadingUser) {
     return (
       <LoadingDiv>
-        <FourSquare color="#32cd32" size="large" text="" textColor="#3a36a5" />
+        <FourSquare color="#8b5cf6" size="large" text="" textColor="#ec4899" />
       </LoadingDiv>
     );
   }
@@ -63,124 +73,133 @@ function WelcomePage() {
     <Container>
       {login && <LoginPage setLogin={setLogin} />}
       {register && <RegisterPage setRegister={setRegister} />}
+
+      {/* ── Mobile NavBar ── */}
       <NavBarMobile>
-        {!user?.user ? (
-          <span style={{ display: mobileInput && "none" }}>Web Course</span>
-        ) : (
-          <span style={{ display: mobileInput && "none" }}>{user?.user}</span>
+        {!mobileInput && (
+          <NavBrand style={{ fontSize: "16px" }}>
+            {user?.user ? user.user : "WebCourse"}
+          </NavBrand>
         )}
         <span
           style={{
             display: "flex",
             flexDirection: "row",
-            gap: "12px",
+            alignItems: "center",
+            gap: "8px",
             width: mobileInput ? "100%" : "",
           }}
         >
           {mobileInput ? (
             <input
               type="text"
-              placeholder={`🔍 explore courses to boost your career`}
+              placeholder="🔍 Search courses..."
+              autoFocus
               onChange={(e) => setInputValue(e.target.value.toLowerCase())}
               onBlur={() => {
                 setMobileInput(false);
                 setInputValue("");
               }}
-              style={{ width: "100%", height: "20px" }}
+              style={{
+                width: "100%",
+                height: "36px",
+                padding: "0 12px",
+                borderRadius: "18px",
+                border: "1.5px solid rgba(139,92,246,0.5)",
+                background: themeDark ? "rgba(255,255,255,0.06)" : "rgba(139,92,246,0.06)",
+                color: themeDark ? "#f0f0f5" : "#1a1a2e",
+                outline: "none",
+                fontSize: "14px",
+                fontFamily: "Inter, sans-serif",
+              }}
             />
           ) : (
-            <FaSearch onClick={() => setMobileInput(true)} />
+            <IconButton onClick={() => setMobileInput(true)}>
+              <FaSearch />
+            </IconButton>
           )}
           {!user?.user && !mobileInput && (
             <>
-              <FaUserPlus onClick={() => setRegister(true)} />
-              <FaUserLock onClick={() => setLogin(true)} />
+              <IconButton onClick={() => setRegister(true)}>
+                <FaUserPlus />
+              </IconButton>
+              <IconButton onClick={() => setLogin(true)}>
+                <FaUserLock />
+              </IconButton>
             </>
           )}
           <ThemeComponent />
         </span>
       </NavBarMobile>
+
+      {/* ── Desktop NavBar ── */}
       <NavBar>
-        <span>Web Course </span>
-        <span> Explore</span>
-        <SearchInput
-          type="text"
-          placeholder={` 🔍     Find expert-led courses to boost your career`}
-          onChange={(e) => setInputValue(e.target.value.toLowerCase())}
-        />
+        <NavBrand>WebCourse</NavBrand>
+        <NavLink>Explore</NavLink>
+        <NavSpacer />
+        <SearchWrapper>
+          <FaSearch />
+          <SearchInput
+            type="text"
+            placeholder="Find expert-led courses..."
+            onChange={(e) => setInputValue(e.target.value.toLowerCase())}
+          />
+        </SearchWrapper>
+        <NavSpacer />
         {user?.user ? (
-          <UserName>{user?.user}</UserName>
+          <UserName>👤 {user.user}</UserName>
         ) : (
           <>
-            <LoginButton
-              onClick={() => setLogin(true)}
-              style={{ marginTop: "0px" }}
-            >
-              Login
-            </LoginButton>
-            <SignupButton
-              onClick={() => setRegister(true)}
-              style={{ marginTop: "0px" }}
-            >
-              Signup
-            </SignupButton>
+            <LoginButton onClick={() => setLogin(true)}>Login</LoginButton>
+            <SignupButton onClick={() => setRegister(true)}>Sign Up</SignupButton>
           </>
         )}
         <ThemeComponent />
       </NavBar>
-      <p style={{ textAlign: "left", width: "95%", margin: "10px" }}>
-        <span
-          style={{
-            display: "block",
-            fontSize: isMobile ? "16px" : "20px",
-            margin: isMobile ? "4px" : "10px",
-          }}
-        >
-          Ready to reimagine your career?
-        </span>
-        <span
-          style={{
-            color: themeDark ? "white" : "#595c73",
-            fontSize: isMobile ? "12px" : "16px",
-            margin: isMobile ? "4px" : "10px",
-            display: "flex",
-          }}
-        >
+
+      {/* ── Hero Section ── */}
+      <HeroSection>
+        <HeroTitle>Ready to reimagine your career?</HeroTitle>
+        <HeroSubtitle>
           Get the skills and real-world experience employers want with Career
           Accelerators.
-        </span>
-      </p>
+        </HeroSubtitle>
+      </HeroSection>
+
+      {/* ── Course Grid ── */}
       <CourseContainer>
         {courseDetails.length > 0 &&
           courseDetails
             .filter((e) => e.name.toLowerCase().includes(inputValue))
             .map((course) => (
               <CardContainer key={course.id}>
-                <img
-                  src={`data:image/jpeg;base64,${course.image}`}
-                  alt={course.name}
-                  width={"100%"}
-                  height={"200px"}
-                />
-                <CourseName>{course.name}</CourseName>
-                <StartCourseButton
-                  to="/course"
-                  onClick={(e) => {
-                    dispatch(storeCourse(course));
-                    if (user.user) {
-                      dispatch(
-                        fetchDataRequest({
-                          FOLDER_ID: course.id,
-                        })
-                      );
-                    } else if (!user?.user) {
-                      e.preventDefault();
-                      setLogin(true);
-                    }
-                  }}
-                >
-                  Start Course
-                </StartCourseButton>
+                <CardImageWrapper>
+                  <img
+                    src={`data:image/jpeg;base64,${course.image}`}
+                    alt={course.name}
+                  />
+                </CardImageWrapper>
+                <CardBody>
+                  <CourseName>{course.name}</CourseName>
+                  <StartCourseButton
+                    to="/course"
+                    onClick={(e) => {
+                      dispatch(storeCourse(course));
+                      if (user.user) {
+                        dispatch(
+                          fetchDataRequest({
+                            FOLDER_ID: course.id,
+                          })
+                        );
+                      } else if (!user?.user) {
+                        e.preventDefault();
+                        setLogin(true);
+                      }
+                    }}
+                  >
+                    Start Course
+                  </StartCourseButton>
+                </CardBody>
               </CardContainer>
             ))}
       </CourseContainer>

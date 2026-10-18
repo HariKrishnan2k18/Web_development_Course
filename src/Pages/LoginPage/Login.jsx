@@ -34,8 +34,7 @@ function LoginPage({ setLogin }) {
       if (!isEmpty(course)) {
         dispatch(
           fetchDataRequest({
-            FOLDER_ID: course.folderid,
-            API_KEY: course.apikey,
+            FOLDER_ID: course.id,
           })
         );
         setLogin(false);

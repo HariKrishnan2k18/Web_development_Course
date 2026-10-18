@@ -1,18 +1,43 @@
 const darkTheme = {
   type: "dark",
-  background: "#2d2f31",
-  color: "white",
-  contentlayout: "#2d2f31",
-  frameborder: "2px solid yellow",
-  frameloadingbackground: "white"
+  background: "#0f0f13",
+  backgroundSecondary: "#16161e",
+  backgroundCard: "rgba(255,255,255,0.04)",
+  backgroundCardHover: "rgba(255,255,255,0.08)",
+  color: "#f0f0f5",
+  colorMuted: "#9090a8",
+  border: "rgba(255,255,255,0.08)",
+  contentlayout: "#16161e",
+  navBackground: "rgba(15, 15, 19, 0.85)",
+  frameborder: "1px solid rgba(139,92,246,0.4)",
+  frameloadingbackground: "#1a1a24",
+  accentGradient: "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
+  accentGradientHover: "linear-gradient(135deg, #7c3aed 0%, #db2777 100%)",
+  searchBg: "rgba(255,255,255,0.06)",
+  searchBorder: "rgba(139,92,246,0.35)",
+  shadow: "0 8px 32px rgba(0,0,0,0.4)",
+  cardShadow: "0 4px 24px rgba(0,0,0,0.3)",
 };
+
 const lightTheme = {
-  background: "white",
-  color: "black",
-  contentlayout: "#f7f9fa",
   type: "light",
-  frameborder: "2px solid black",
-  frameloadingbackground: "#413b3b"
+  background: "#fafafa",
+  backgroundSecondary: "#f3f4f8",
+  backgroundCard: "#ffffff",
+  backgroundCardHover: "#f7f3ff",
+  color: "#1a1a2e",
+  colorMuted: "#6b7280",
+  border: "rgba(0,0,0,0.08)",
+  contentlayout: "#f3f4f8",
+  navBackground: "rgba(255,255,255,0.9)",
+  frameborder: "1px solid rgba(139,92,246,0.3)",
+  frameloadingbackground: "#f3f4f8",
+  accentGradient: "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
+  accentGradientHover: "linear-gradient(135deg, #7c3aed 0%, #db2777 100%)",
+  searchBg: "rgba(139,92,246,0.06)",
+  searchBorder: "rgba(139,92,246,0.35)",
+  shadow: "0 8px 32px rgba(139,92,246,0.12)",
+  cardShadow: "0 4px 24px rgba(139,92,246,0.08)",
 };
 
 export { darkTheme, lightTheme };
