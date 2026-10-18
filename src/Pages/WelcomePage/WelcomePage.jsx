@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchDataRequest } from "../../data/SubFolderSlice";
 import {
   CardContainer,
+  CourseStatus,
+  SkeletonCard,
+  SkeletonBlock,
   CardImageWrapper,
   CardBody,
   Container,
@@ -43,6 +46,8 @@ function WelcomePage() {
   const {
     user,
     loadingUser,
+    loadingCourseDetails,
+    errorCourseDetails,
     courseDetails: getCourse,
   } = useSelector((s) => s.currentCourse);
   const { themeDark } = useSelector((s) => s.theme);
@@ -167,7 +172,24 @@ function WelcomePage() {
       </HeroSection>
 
       {/* ── Course Grid ── */}
-      <CourseContainer>
+      {loadingCourseDetails && <CourseStatus role="status">Loading your courses…</CourseStatus>}
+      {!loadingCourseDetails && errorCourseDetails && courseDetails.length === 0 && (
+        <CourseStatus role="alert">
+          <span>We couldn’t load your courses. Please try again.</span>
+          <LoginButton onClick={() => dispatch(loadCourseDetails({}))}>Try again</LoginButton>
+        </CourseStatus>
+      )}
+      <CourseContainer aria-busy={loadingCourseDetails} aria-label="Courses">
+        {loadingCourseDetails && courseDetails.length === 0 && Array.from({ length: 8 }, (_, index) => (
+          <SkeletonCard key={index} aria-hidden="true">
+            <SkeletonBlock $height="165px" $image />
+            <CardBody>
+              <SkeletonBlock $width="90%" />
+              <SkeletonBlock $width="65%" />
+              <SkeletonBlock $height="38px" />
+            </CardBody>
+          </SkeletonCard>
+        ))}
         {courseDetails.length > 0 &&
           courseDetails
             .filter((e) => e.name.toLowerCase().includes(inputValue))

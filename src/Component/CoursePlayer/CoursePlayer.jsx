@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   LeftContainer,
-  LoadingDiv,
   RightContainer,
   SubFolderDiv,
   VideoWrapper,
@@ -21,7 +20,7 @@ import {
 import { isMobile } from "react-device-detect";
 import { useTheme } from "styled-components";
 import { useSelector } from "react-redux";
-import { FourSquare } from "react-loading-indicators";
+import CourseLoading from "./CourseLoading";
 import {
   cleanFileName,
   sortName,
@@ -273,9 +272,7 @@ const VideoPlayer = () => {
 
   if (loading) {
     return (
-      <LoadingDiv>
-        <FourSquare color="#8b5cf6" size="large" text="" textColor="#ec4899" />
-      </LoadingDiv>
+      <CourseLoading name={course?.name} />
     );
   }
   if (error) {

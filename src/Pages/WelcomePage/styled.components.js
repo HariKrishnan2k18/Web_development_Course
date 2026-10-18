@@ -400,3 +400,39 @@ export const IconButton = styled.button`
     background: ${({ theme }) => theme.backgroundCard};
   }
 `;
+
+const skeletonShimmer = keyframes`
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+`;
+
+export const CourseStatus = styled.div`
+  width: 95%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  color: ${({ theme }) => theme.colorMuted};
+  font-size: 14px;
+  font-weight: 600;
+`;
+
+export const SkeletonCard = styled.div`
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid ${({ theme }) => theme.border};
+  background: ${({ theme }) => theme.backgroundCard};
+`;
+
+export const SkeletonBlock = styled.div`
+  height: ${({ $height }) => $height || "16px"};
+  width: ${({ $width }) => $width || "100%"};
+  border-radius: ${({ $image }) => $image ? "0" : "8px"};
+  background: ${({ theme }) => theme.type === "dark"
+    ? "linear-gradient(100deg, #252334 25%, #39334f 50%, #252334 75%)"
+    : "linear-gradient(100deg, #eee9f8 25%, #faf8ff 50%, #eee9f8 75%)"};
+  background-size: 200% 100%;
+  animation: ${skeletonShimmer} 1.6s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+`;
