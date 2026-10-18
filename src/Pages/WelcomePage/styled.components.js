@@ -12,16 +12,6 @@ const fadeInUp = keyframes`
   to   { opacity: 1; transform: translateY(0); }
 `;
 
-const shimmer = keyframes`
-  0%   { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-`;
-
-const glowPulse = keyframes`
-  0%, 100% { box-shadow: 0 0 0 2px rgba(139,92,246,0.5); }
-  50%       { box-shadow: 0 0 0 4px rgba(236,72,153,0.5); }
-`;
-
 const borderRotate = keyframes`
   0%   { border-color: #8b5cf6; }
   33%  { border-color: #ec4899; }

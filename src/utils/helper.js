@@ -28,7 +28,7 @@ export const getVideoDuration = (video) => {
     const s = totalSec % 60;
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   }
-  const match = (video.name || "").match(/[\(\[]?(\d{1,2}):(\d{2})[\)\]]?/);
+  const match = (video.name || "").match(/[([]?(\d{1,2}):(\d{2})[)\]]?/);
   if (match) {
     return `${match[1]}:${match[2]}`;
   }
