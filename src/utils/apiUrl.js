@@ -9,7 +9,7 @@ export const LOCAL_API_URL =
 
 export const PROD_API_URL =
   process.env.REACT_APP_PROD_API_URL ||
-  "https://web-development-course-backend-xr8b.vercel.app";
+  "https://web-development-course-backend.vercel.app/";
 
 /**
  * Checks if the current app is running in a local environment.
